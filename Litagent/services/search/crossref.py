@@ -18,7 +18,7 @@ from typing import List, Dict, Optional
 CROSSREF_API = "https://api.crossref.org/works"
 
 # Polite Pool：带上邮箱，Crossref 会优先处理
-POLITE_EMAIL = "mail"
+POLITE_EMAIL = "25209100302@stu.xidian.edu.cn"
 USER_AGENT = f"StarfireAgent/1.0 (mailto:{POLITE_EMAIL})"
 
 

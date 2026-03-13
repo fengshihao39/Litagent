@@ -9,15 +9,15 @@
 """
 
 import json
-from typing import List, Dict
+from typing import Dict, List
+
 from openai import OpenAI
 
-# ── API Key 直接写在这里，方便你修改 ─────────────────────
-API_KEY = "xxxx"
+from Litagent.config.settings import get_deepseek_api_key
 
 
 def _get_client() -> OpenAI:
-    return OpenAI(api_key=API_KEY, base_url="https://api.deepseek.com")
+    return OpenAI(api_key=get_deepseek_api_key(), base_url="https://api.deepseek.com")
 
 
 # ── 单篇论文精读 ──────────────────────────────────────────

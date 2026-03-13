@@ -94,7 +94,7 @@ def load_pdf_from_url(url: str) -> Optional[bytes]:
         req = urllib.request.Request(
             url,
             headers={
-                "User-Agent": "StarfireAgent/1.0 (mailto:xxx@stu.xidian.edu.cn)"
+                "User-Agent": "StarfireAgent/1.0 (mailto:25209100302@stu.xidian.edu.cn)"
             },
         )
         with urllib.request.urlopen(req, timeout=30) as resp:

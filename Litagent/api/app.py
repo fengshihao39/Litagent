@@ -4,26 +4,22 @@
 
 运行方式：
     source venv/bin/activate
-    uvicorn xinghuo_agent.api:app --host 0.0.0.0 --port 8000 --reload
+    uvicorn xinghuo_agent.api.app:app --host 0.0.0.0 --port 8000 --reload
 
 接口：
     POST /search   搜索论文（关键词 + 可选文件上传 + 年份过滤）
     GET  /health   健康检查
 """
 
-import os
-import sys
 import json
 import re
+from typing import Any, Dict, List, Optional
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-
-from fastapi import FastAPI, Form, UploadFile, File
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List, Dict, Any, Optional
 
-from tools.multi_search import multi_search
-from tools.query_translator import get_search_queries, is_chinese
+from Litagent.services.query.query_translator import get_search_queries, is_chinese
+from Litagent.services.search.multi_search import multi_search
 
 app = FastAPI(
     title="星火文献 Agent API",
@@ -53,6 +49,8 @@ async def search(
     file: Optional[UploadFile] = File(default=None),
     year_from: Optional[int] = Form(default=None),
     max_results: int = Form(default=10),
+    use_domain_vocab: bool = Form(default=True),
+    use_arxiv_categories: bool = Form(default=True),
 ) -> Dict[str, Any]:
     """
     搜索论文接口
@@ -76,7 +74,10 @@ async def search(
     # 1. 关键词搜索（多源并联）
     if query.strip():
         # 查询翻译（中文 → 英文）
-        search_queries = get_search_queries(query.strip())
+        search_queries = get_search_queries(
+            query.strip(),
+            use_domain_vocab=use_domain_vocab,
+        )
         primary_query = search_queries[0]
         translated_query = primary_query
 
@@ -84,6 +85,7 @@ async def search(
             primary_query,
             max_results=max_results,
             year_from=year_from,
+            use_arxiv_categories=use_arxiv_categories,
         )
         for p in raw_papers:
             if "error" not in p:

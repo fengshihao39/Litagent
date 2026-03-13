@@ -6,15 +6,16 @@
 """
 
 import json
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from openai import OpenAI
+
+from Litagent.config.settings import get_deepseek_api_key
 
 # ── DeepSeek 客户端 ───────────────────────────────────────
 
 _client = OpenAI(
-    api_key="x x x x",
-    
+    api_key=get_deepseek_api_key(),
     base_url="https://api.deepseek.com",
 )
 
@@ -273,7 +274,7 @@ if __name__ == "__main__":
 
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-    from xinghuo_agent.tools.pdf_loader import parse_arxiv_paper
+    from Litagent.services.pdf.pdf_loader import parse_arxiv_paper
 
     # 测试论文列表（模拟 multi_search 输出）
     test_papers = [
