@@ -4,20 +4,15 @@
 合并去重，按相关性排序后统一返回
 """
 
-import sys
-import os
 import threading
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
-# 确保包路径正确（既能被 agent 导入，也能直接运行）
-_pkg_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-if _pkg_root not in sys.path:
-    sys.path.insert(0, _pkg_root)
-
-from tools.arxiv_search import search_papers as arxiv_search
-from tools.semantic_scholar_search import search_papers as semantic_search
-from tools.ieee_search import search_papers as ieee_search
-from tools.crossref_search import search_papers as crossref_search
+from Litagent.services.search.arxiv import search_papers as arxiv_search
+from Litagent.services.search.crossref import search_papers as crossref_search
+from Litagent.services.search.ieee import search_papers as ieee_search
+from Litagent.services.search.semantic_scholar import (
+    search_papers as semantic_search,
+)
 
 
 def multi_search(
@@ -25,6 +20,7 @@ def multi_search(
     max_results: int = 10,
     sources: Optional[List[str]] = None,
     year_from: Optional[int] = None,
+    use_arxiv_categories: bool = True,
 ) -> List[Dict]:
     """
     四源并联搜索
@@ -34,6 +30,7 @@ def multi_search(
         max_results : 最终返回总数
         sources     : 指定来源，默认全部。可选 ["arxiv", "semantic_scholar", "ieee", "crossref"]
         year_from   : 最早发表年份（如 2020 表示只返回 2020 年及以后的论文）
+        use_arxiv_categories: 是否启用 arXiv 默认分类过滤
 
     返回:
         去重合并后的论文列表，每篇带 source 标识
@@ -50,7 +47,11 @@ def multi_search(
 
     def run_arxiv():
         try:
-            papers = arxiv_search(query, max_results=per_source)
+            papers = arxiv_search(
+                query,
+                max_results=per_source,
+                use_default_categories=use_arxiv_categories,
+            )
             for p in papers:
                 if "error" not in p:
                     p.setdefault("source", "arxiv")

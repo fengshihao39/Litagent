@@ -1,12 +1,25 @@
-import os
-import io
+"""
+星火文献 Agent - Streamlit Web 界面
+运行方式：
+    source venv/bin/activate
+    streamlit run xinghuo_agent/ui/streamlit_app.py
+"""
+
+import sys
 import textwrap
-from typing import List, Dict, Any
+from pathlib import Path
+from typing import Any, Dict, List
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import requests
 import streamlit as st
+
+ROOT_DIR = Path(__file__).resolve().parents[2]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+from Litagent.config.settings import get_api_base_url
 
 
 st.set_page_config(
@@ -15,18 +28,28 @@ st.set_page_config(
     layout="wide",
 )
 
-API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
+API_BASE_URL = get_api_base_url()
 
 
 def call_backend(
-    query: str, uploaded_file, max_results: int = 10, year_from: int = None
+    query: str,
+    uploaded_file,
+    max_results: int = 10,
+    year_from: int | None = None,
+    use_domain_vocab: bool = True,
+    use_arxiv_categories: bool = True,
 ) -> List[Dict[str, Any]]:
     """Send query/file to backend API; fall back to demo data on failure."""
     if not query and uploaded_file is None:
         return []
 
     files = None
-    data = {"query": query, "max_results": max_results}
+    data = {
+        "query": query,
+        "max_results": max_results,
+        "use_domain_vocab": use_domain_vocab,
+        "use_arxiv_categories": use_arxiv_categories,
+    }
     if year_from is not None:
         data["year_from"] = year_from
     if uploaded_file is not None:
@@ -127,6 +150,17 @@ def render_controls():
         )
         year_from = time_options[time_label]
 
+        st.markdown("---")
+        st.subheader("检索偏置开关")
+        use_domain_vocab = st.checkbox(
+            "启用领域词汇预置（雷达/AI/信号处理）",
+            value=True,
+        )
+        use_arxiv_categories = st.checkbox(
+            "启用 arXiv 默认分类过滤",
+            value=True,
+        )
+
         api_hint = textwrap.dedent(
             f"""
             当前 API: `{API_BASE_URL}/search`
@@ -136,7 +170,15 @@ def render_controls():
         )
         st.code(api_hint, language="text")
         run = st.button("开始分析", type="primary", use_container_width=True)
-    return query, uploaded_file, run, max_results, year_from
+    return (
+        query,
+        uploaded_file,
+        run,
+        max_results,
+        year_from,
+        use_domain_vocab,
+        use_arxiv_categories,
+    )
 
 
 def render_results(results: List[Dict[str, Any]]):
@@ -223,11 +265,24 @@ def plot_keyword_freq(results: List[Dict[str, Any]]):
 
 def main():
     render_header()
-    query, uploaded_file, run, max_results, year_from = render_controls()
+    (
+        query,
+        uploaded_file,
+        run,
+        max_results,
+        year_from,
+        use_domain_vocab,
+        use_arxiv_categories,
+    ) = render_controls()
     if run:
         with st.spinner("分析中，请稍候..."):
             results = call_backend(
-                query, uploaded_file, max_results=max_results, year_from=year_from
+                query,
+                uploaded_file,
+                max_results=max_results,
+                year_from=year_from,
+                use_domain_vocab=use_domain_vocab,
+                use_arxiv_categories=use_arxiv_categories,
             )
         render_results(results)
     else:

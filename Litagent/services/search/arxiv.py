@@ -26,6 +26,7 @@ def search_papers(
     query: str,
     max_results: int = 8,
     categories: Optional[List[str]] = None,
+    use_default_categories: bool = True,
     sort_by: str = "relevance",
 ) -> List[Dict]:
     """
@@ -34,17 +35,21 @@ def search_papers(
     参数:
         query        : 搜索关键词（英文效果最好）
         max_results  : 返回论文数量，默认 8 篇
-        categories   : arXiv 分类列表，None 则使用西电默认三大方向
+        categories   : arXiv 分类列表，None 且 use_default_categories=True 则使用西电默认三大方向
+        use_default_categories: 是否启用默认分类过滤
         sort_by      : 排序方式 relevance | lastUpdatedDate | submittedDate
 
     返回:
         List[Dict]，每个 Dict 包含论文的结构化信息
     """
     if categories is None:
-        categories = DEFAULT_CATEGORIES
+        categories = DEFAULT_CATEGORIES if use_default_categories else []
 
-    cat_filter = " OR ".join([f"cat:{c}" for c in categories])
-    search_query = f"({query}) AND ({cat_filter})"
+    if categories:
+        cat_filter = " OR ".join([f"cat:{c}" for c in categories])
+        search_query = f"({query}) AND ({cat_filter})"
+    else:
+        search_query = f"({query})"
 
     params = {
         "search_query": search_query,

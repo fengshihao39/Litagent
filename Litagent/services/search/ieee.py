@@ -4,17 +4,18 @@ IEEE Xplore 搜索模块
 Key 状态 waiting 时会返回 403，激活后自动生效
 """
 
-import urllib.request
-import urllib.parse
-import urllib.error
 import json
 import time
-from typing import List, Dict, Optional
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Dict, List, Optional
+
+from Litagent.config.settings import get_ieee_api_key
 
 IEEE_API_BASE = "https://ieeexploreapi.ieee.org/api/v1/search/articles"
 
-# IEEE API Key（从页面申请到的）
-IEEE_API_KEY = "xxxx"
+IEEE_API_KEY = get_ieee_api_key(required=False)
 
 # 西电三大方向对应的 IEEE 分类词
 IEEE_QUERY_TERMS = {
@@ -42,6 +43,14 @@ def search_papers(
     返回:
         统一格式的论文列表
     """
+    if not IEEE_API_KEY:
+        return [
+            {
+                "error": "IEEE API Key 未配置，请在 .env 中设置 IEEE_API_KEY。",
+                "source": "ieee",
+            }
+        ]
+
     params = {
         "apikey": IEEE_API_KEY,
         "querytext": query,

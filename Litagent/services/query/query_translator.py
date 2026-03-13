@@ -11,16 +11,18 @@
   - 电子信息 / AI / 雷达信号处理领域优化
 """
 
-import re
 import json
-from typing import List, Dict, Tuple
+import re
+from typing import Dict, List, Tuple
 
 from openai import OpenAI
+
+from Litagent.config.settings import get_deepseek_api_key
 
 # ── DeepSeek 客户端 ───────────────────────────────────────
 
 _client = OpenAI(
-    api_key="xxxx",
+    api_key=get_deepseek_api_key(),
     base_url="https://api.deepseek.com",
 )
 
@@ -105,7 +107,7 @@ def apply_domain_vocab(text: str) -> Tuple[str, List[str]]:
 # ── DeepSeek 翻译 + 扩展 ─────────────────────────────────
 
 
-def translate_and_expand(query: str) -> Dict:
+def translate_and_expand(query: str, use_domain_vocab: bool = True) -> Dict:
     """
     主函数：翻译中文查询并扩展同义词
     返回：
@@ -130,8 +132,11 @@ def translate_and_expand(query: str) -> Dict:
             "notes": "英文查询，已扩展同义词变体",
         }
 
-    # 中文查询：先做预置词汇替换，再用 DeepSeek 处理剩余部分
-    pre_translated, replacements = apply_domain_vocab(original)
+    # 中文查询：先做预置词汇替换（可关闭），再用 DeepSeek 处理剩余部分
+    if use_domain_vocab:
+        pre_translated, replacements = apply_domain_vocab(original)
+    else:
+        pre_translated, replacements = original, []
 
     prompt = f"""你是电子信息和人工智能领域的专业翻译，请完成以下任务：
 
@@ -223,12 +228,12 @@ Only return the JSON array, nothing else."""
 # ── 便捷函数：获取最佳搜索查询 ─────────────────────────
 
 
-def get_search_queries(user_input: str) -> List[str]:
+def get_search_queries(user_input: str, use_domain_vocab: bool = True) -> List[str]:
     """
     给定用户原始输入，返回用于搜索的查询串列表（主查询在前）
     这是对外暴露的主接口
     """
-    result = translate_and_expand(user_input)
+    result = translate_and_expand(user_input, use_domain_vocab=use_domain_vocab)
     queries = [result["translated"]] + [
         v for v in result["variants"] if v != result["translated"]
     ]

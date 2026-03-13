@@ -85,7 +85,7 @@ def search_papers(
 
     headers = {
         # Polite pool：带邮箱有助于降低限流概率
-        "User-Agent": "StarfireAgent/1.0 (mailto:xxx@stu.xidian.edu.cn)",
+        "User-Agent": "StarfireAgent/1.0 (mailto:25209100302@stu.xidian.edu.cn)",
     }
 
     try:
