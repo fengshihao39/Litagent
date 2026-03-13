@@ -1,8 +1,10 @@
-"""
-星火文献 Agent - Streamlit Web 界面
-运行方式：
-    source venv/bin/activate
-    streamlit run xinghuo_agent/ui/streamlit_app.py
+"""Litagent - Streamlit 前端
+
+该模块是 Litagent 的基于 Streamlit 的前端。
+
+使用样例：
+
+    在项目根目录下运行 `PYTHONPATH=. streamlit run Litagent/frontend/streamlit_app.py`。
 """
 
 import sys
@@ -15,15 +17,14 @@ import pandas as pd
 import requests
 import streamlit as st
 
+from Litagent.config.settings import get_api_base_url
+
 ROOT_DIR = Path(__file__).resolve().parents[2]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from Litagent.config.settings import get_api_base_url
-
-
 st.set_page_config(
-    page_title="文献智能助手",
+    page_title="Litagent 文献智能助手",
     page_icon="📚",
     layout="wide",
 )
