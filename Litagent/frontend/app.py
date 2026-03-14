@@ -9,9 +9,10 @@
 import datetime
 
 import streamlit as st
+
 from Litagent.frontend.api import fetch_papers
+from Litagent.frontend.components import plot_keyword_freq, plot_year_trend
 from Litagent.frontend.utils import to_bibtex
-from Litagent.frontend.components import plot_year_trend, plot_keyword_freq
 
 st.set_page_config(page_title="Litagent 文献智能助手", page_icon="📚", layout="wide")
 
@@ -20,9 +21,15 @@ def main():
     """构建 Litagent Streamlit 前端页面并处理交互。"""
     st.title("📚 Litagent 文献智能助手")
     st.caption("欢迎使用 Litagent 文献智能助手！")
-    st.caption("Litagent 可以根据你的关键词和研究主题，以及正在研究的文献内容，自动检索并为你推荐相关的文献。")
-    st.caption("在左侧设置你想要检索的文献关键词或主题，并设置文献的返回数量和时间范围，即可开始检索。")
-    st.caption("你也可以上传自己正在研究的文献列表（支持 `.csv`、`.json`、`.bib` 和 `.bibtex` 格式），让 AI 自动分析你的研究主题。")
+    st.caption(
+        "Litagent 可以根据你的关键词和研究主题，以及正在研究的文献内容，自动检索并为你推荐相关的文献。"
+    )
+    st.caption(
+        "在左侧设置你想要检索的文献关键词或主题，并设置文献的返回数量和时间范围，即可开始检索。"
+    )
+    st.caption(
+        "你也可以上传自己正在研究的文献列表（支持 `.csv`、`.json`、`.bib` 和 `.bibtex` 格式），让 AI 自动分析你的研究主题。"
+    )
 
     with st.sidebar:
         st.subheader("检索设置")

@@ -7,7 +7,6 @@ import re
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Dict, List, Optional
 
 from Litagent.backend.app.providers.base import ProviderBase
 
@@ -23,9 +22,9 @@ class CrossrefProvider(ProviderBase):
         self,
         query: str,
         max_results: int = 8,
-        min_year: Optional[int] = None,
+        min_year: int | None = None,
         sort_by: str = "relevance",
-    ) -> List[Dict]:
+    ) -> list[dict]:
         return search_papers(
             query,
             max_results=max_results,
@@ -37,9 +36,9 @@ class CrossrefProvider(ProviderBase):
 def search_papers(
     query: str,
     max_results: int = 8,
-    min_year: Optional[int] = None,
+    min_year: int | None = None,
     sort_by: str = "relevance",
-) -> List[Dict]:
+) -> list[dict]:
     """在 Crossref 上搜索文献。
 
     Args:
@@ -83,7 +82,7 @@ def search_papers(
     return _parse_crossref_response(content, max_results)
 
 
-def _format_published_date(date_parts: List[int]) -> str:
+def _format_published_date(date_parts: list[int]) -> str:
     if len(date_parts) >= 3:
         return f"{date_parts[0]}-{date_parts[1]:02d}-{date_parts[2]:02d}"
     if len(date_parts) == 2:
@@ -93,7 +92,7 @@ def _format_published_date(date_parts: List[int]) -> str:
     return "unknown"
 
 
-def _extract_authors(item: Dict) -> List[str]:
+def _extract_authors(item: dict) -> list[str]:
     authors = []
     for author in item.get("author", []):
         given = author.get("given", "")
@@ -104,21 +103,21 @@ def _extract_authors(item: Dict) -> List[str]:
     return authors
 
 
-def _extract_date_parts(item: Dict) -> List[int]:
+def _extract_date_parts(item: dict) -> list[int]:
     pub = item.get("published", {}) or item.get("published-print", {}) or {}
     return pub.get("date-parts", [[]])[0]
 
 
-def _extract_venue(item: Dict) -> str:
+def _extract_venue(item: dict) -> str:
     container = item.get("container-title", [])
     return container[0] if container else ""
 
 
-def _extract_abs_url(item: Dict, doi: str) -> str:
+def _extract_abs_url(item: dict, doi: str) -> str:
     return item.get("URL", f"https://doi.org/{doi}" if doi else "")
 
 
-def _parse_crossref_item(item: Dict) -> Optional[Dict]:
+def _parse_crossref_item(item: dict) -> dict | None:
     title_list = item.get("title", [])
     title = title_list[0] if title_list else ""
     if not title.strip():
@@ -145,7 +144,7 @@ def _parse_crossref_item(item: Dict) -> Optional[Dict]:
     }
 
 
-def _parse_crossref_response(json_content: str, max_results: int) -> List[Dict]:
+def _parse_crossref_response(json_content: str, max_results: int) -> list[dict]:
     try:
         data = json.loads(json_content)
     except json.JSONDecodeError as e:
@@ -155,7 +154,7 @@ def _parse_crossref_response(json_content: str, max_results: int) -> List[Dict]:
     if not items:
         return []
 
-    papers: List[Dict] = []
+    papers: list[dict] = []
     for item in items:
         parsed = _parse_crossref_item(item)
         if parsed:

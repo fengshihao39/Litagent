@@ -3,10 +3,10 @@
 该模块是 Litagent 的 Streamlit 前端的工具层，包括了部分前端展示时使用的工具。
 """
 
-from typing import Any, Dict
+from typing import Any
 
 
-def to_bibtex(entry: Dict[str, Any]) -> str:
+def to_bibtex(entry: dict[str, Any]) -> str:
     """将论文数据字典转换为 BibTeX 字符串。
 
     Args:

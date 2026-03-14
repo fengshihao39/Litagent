@@ -2,8 +2,6 @@
 Litagent - FastAPI 后端搜索接口
 """
 
-from typing import Optional
-
 from fastapi import APIRouter, File, Form, UploadFile
 
 from Litagent.backend.app.models.response import SearchResponse
@@ -15,8 +13,8 @@ router = APIRouter()
 @router.post("/search", response_model=SearchResponse)
 async def search(
     query: str = Form(default=""),
-    file: Optional[UploadFile] = File(default=None),
-    year_from: Optional[int] = Form(default=None),
+    file: UploadFile | None = File(default=None),
+    year_from: int | None = Form(default=None),
     max_results: int = Form(default=10),
     use_arxiv_categories: bool = Form(default=True),
 ) -> SearchResponse:

@@ -6,7 +6,6 @@ import json
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Dict, List, Optional
 
 from Litagent.backend.app.providers.base import ProviderBase
 
@@ -22,10 +21,10 @@ class SemanticScholarProvider(ProviderBase):
         self,
         query: str,
         max_results: int = 8,
-        fields_of_study: Optional[List[str]] = None,
+        fields_of_study: list[str] | None = None,
         min_citations: int = 0,
         sort_by: str = "relevance",
-    ) -> List[Dict]:
+    ) -> list[dict]:
         return search_papers(
             query,
             max_results=max_results,
@@ -38,10 +37,10 @@ class SemanticScholarProvider(ProviderBase):
 def search_papers(
     query: str,
     max_results: int = 8,
-    fields_of_study: Optional[List[str]] = None,
+    fields_of_study: list[str] | None = None,
     min_citations: int = 0,
     sort_by: str = "relevance",
-) -> List[Dict]:
+) -> list[dict]:
     """在 Semantic Scholar 上搜索文献。
 
     Args:
@@ -124,7 +123,7 @@ def _parse_semantic_scholar_response(
     max_results: int,
     min_citations: int,
     sort_by: str,
-) -> List[Dict]:
+) -> list[dict]:
     try:
         data = json.loads(json_content)
     except json.JSONDecodeError as e:
@@ -139,7 +138,7 @@ def _parse_semantic_scholar_response(
     if not raw_papers:
         return []
 
-    papers: List[Dict] = []
+    papers: list[dict] = []
     for paper in raw_papers:
         parsed = _parse_semantic_scholar_paper(paper, min_citations)
         if parsed:
@@ -151,7 +150,7 @@ def _parse_semantic_scholar_response(
     return papers[:max_results]
 
 
-def _parse_semantic_scholar_paper(paper: Dict, min_citations: int) -> Optional[Dict]:
+def _parse_semantic_scholar_paper(paper: dict, min_citations: int) -> dict | None:
     abstract = (paper.get("abstract") or "").strip()
     if not abstract:
         return None
@@ -191,11 +190,11 @@ def _parse_semantic_scholar_paper(paper: Dict, min_citations: int) -> Optional[D
     }
 
 
-def _extract_semantic_scholar_authors(paper: Dict) -> List[str]:
+def _extract_semantic_scholar_authors(paper: dict) -> list[str]:
     return [a.get("name", "") for a in paper.get("authors", []) if a.get("name")]
 
 
-def _format_semantic_scholar_date(paper: Dict) -> str:
+def _format_semantic_scholar_date(paper: dict) -> str:
     pub_date = paper.get("publicationDate") or ""
     year = str(paper.get("year") or "")
     if pub_date:
@@ -205,7 +204,7 @@ def _format_semantic_scholar_date(paper: Dict) -> str:
     return "unknown"
 
 
-def _extract_semantic_scholar_venue(paper: Dict) -> str:
+def _extract_semantic_scholar_venue(paper: dict) -> str:
     pub_venue = paper.get("publicationVenue")
     if pub_venue:
         return pub_venue.get("name", "") or paper.get("venue", "")
@@ -213,7 +212,7 @@ def _extract_semantic_scholar_venue(paper: Dict) -> str:
 
 
 def _extract_semantic_scholar_urls(
-    paper: Dict,
+    paper: dict,
     paper_id: str,
     arxiv_id: str,
     doi: str,
@@ -235,7 +234,7 @@ def _extract_semantic_scholar_urls(
     return abs_url, pdf_url
 
 
-def _extract_semantic_scholar_tldr(paper: Dict) -> str:
+def _extract_semantic_scholar_tldr(paper: dict) -> str:
     tldr_obj = paper.get("tldr")
     if tldr_obj and tldr_obj.get("text"):
         return tldr_obj["text"]

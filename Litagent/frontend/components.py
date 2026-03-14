@@ -3,13 +3,13 @@
 该模块承载图表和统计类组件，供 Streamlit 前端页面复用。
 """
 
-from typing import Any, Dict, List
+from typing import Any
 
 import pandas as pd
 import streamlit as st
 
 
-def plot_year_trend(results: List[Dict[str, Any]]):
+def plot_year_trend(results: list[dict[str, Any]]):
     """绘制文献出版年份趋势。
 
     Args:
@@ -26,7 +26,7 @@ def plot_year_trend(results: List[Dict[str, Any]]):
     st.line_chart(trend)
 
 
-def plot_keyword_freq(results: List[Dict[str, Any]]):
+def plot_keyword_freq(results: list[dict[str, Any]]):
     """绘制关键词频率 Top 12 柱状图。
 
     Args:
