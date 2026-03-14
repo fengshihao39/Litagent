@@ -1,13 +1,18 @@
-"""Backend run entrypoint."""
+"""
+Litagent - FastAPI 后端入口点
+"""
 
 import uvicorn
 
+from Litagent.backend.app.core.config import get_api_host, get_api_port
+
 
 def main() -> None:
+    """FastAPI 后端入口点。"""
     uvicorn.run(
         "Litagent.backend.app.main:app",
-        host="0.0.0.0",
-        port=8000,
+        host=get_api_host(),
+        port=get_api_port(),
         reload=True,
     )
 

@@ -79,3 +79,34 @@ def get_api_base_url() -> str:
         str: 后端启动的 API Base URL。
     """
     return _get_env("API_BASE_URL", default="http://localhost:8000")
+
+
+def get_api_host() -> str:
+    """获取后端启动的 Host。
+
+    Returns:
+        str: 后端 Host。
+    """
+    return _get_env("API_HOST", default="0.0.0.0")
+
+
+def get_api_port() -> int:
+    """获取后端启动的端口号。
+
+    Returns:
+        int: 后端端口号。
+    """
+    port = _get_env("API_PORT", default="8000")
+    try:
+        return int(port)
+    except ValueError:
+        return 8000
+
+
+def get_app_version() -> str:
+    """获取应用版本号。
+
+    Returns:
+        str: 应用版本号。
+    """
+    return _get_env("APP_VERSION", default="0.1.0")
