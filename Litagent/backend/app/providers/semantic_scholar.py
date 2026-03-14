@@ -114,7 +114,9 @@ def search_papers(
             }
         ]
 
-    return _parse_semantic_scholar_response(content, max_results, min_citations, sort_by)
+    return _parse_semantic_scholar_response(
+        content, max_results, min_citations, sort_by
+    )
 
 
 def _parse_semantic_scholar_response(
@@ -126,7 +128,12 @@ def _parse_semantic_scholar_response(
     try:
         data = json.loads(json_content)
     except json.JSONDecodeError as e:
-        return [{"error": f"Semantic Scholar 响应解析失败: {e}", "source": "semantic_scholar"}]
+        return [
+            {
+                "error": f"Semantic Scholar 响应解析失败: {e}",
+                "source": "semantic_scholar",
+            }
+        ]
 
     raw_papers = data.get("data", [])
     if not raw_papers:
