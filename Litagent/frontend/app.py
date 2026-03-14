@@ -44,8 +44,11 @@ def main():
             time_label = st.selectbox("文献时间范围", options=list(year_map.keys()))
 
             st.markdown("---")
+
+            # 我们在后端已经优化了搜索方案，这个 Checkbox 应当说是已经没啥用的了，但还是留着吧。
             use_domain_vocab = st.checkbox("启用领域词汇预置", value=True)
-            use_arxiv = st.checkbox("启用 arXiv 默认分类过滤", value=True)  # TODO 将这里的两个 `checkbox` 的说明具体化，在整理完后端代码后完成
+
+            use_arxiv = st.checkbox("启用 arXiv 默认分类过滤", value=True)
 
             submitted = st.form_submit_button(
                 "开始检索", type="primary", use_container_width=True

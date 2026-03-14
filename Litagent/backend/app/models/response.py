@@ -25,5 +25,4 @@ class PaperResult(BaseModel):
 class SearchResponse(BaseModel):
     """搜索相应模型。"""
     results: List[PaperResult]
-    translated_query: str
     total: int
