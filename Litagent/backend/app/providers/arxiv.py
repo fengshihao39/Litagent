@@ -6,7 +6,6 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
-from typing import Dict, List, Optional
 
 from Litagent.backend.app.providers.base import ProviderBase
 
@@ -30,10 +29,10 @@ class ArxivProvider(ProviderBase):
         self,
         query: str,
         max_results: int = 8,
-        categories: Optional[List[str]] = None,
+        categories: list[str] | None = None,
         use_default_categories: bool = True,
         sort_by: str = "relevance",
-    ) -> List[Dict]:
+    ) -> list[dict]:
         return search_papers(
             query,
             max_results=max_results,
@@ -46,10 +45,10 @@ class ArxivProvider(ProviderBase):
 def search_papers(
     query: str,
     max_results: int = 8,
-    categories: Optional[List[str]] = None,
+    categories: list[str] | None = None,
     use_default_categories: bool = True,
     sort_by: str = "relevance",
-) -> List[Dict]:
+) -> list[dict]:
     """在 arXiv 上搜索文献。
 
     Args:
@@ -92,12 +91,12 @@ def search_papers(
     return _parse_arxiv_response(content)
 
 
-def _get_entry_text(entry: ET.Element, tag: str, ns: Dict[str, str]) -> str:
+def _get_entry_text(entry: ET.Element, tag: str, ns: dict[str, str]) -> str:
     el = entry.find(tag, ns)
     return (el.text or "").strip() if el is not None else ""
 
 
-def _parse_arxiv_entry(entry: ET.Element, ns: Dict[str, str]) -> Dict:
+def _parse_arxiv_entry(entry: ET.Element, ns: dict[str, str]) -> dict:
     raw_id = _get_entry_text(entry, "atom:id", ns)
     arxiv_id = raw_id.split("/abs/")[-1].split("v")[0]
     title = " ".join(_get_entry_text(entry, "atom:title", ns).split())
@@ -126,7 +125,7 @@ def _parse_arxiv_entry(entry: ET.Element, ns: Dict[str, str]) -> Dict:
     }
 
 
-def _parse_arxiv_response(xml_content: str) -> List[Dict]:
+def _parse_arxiv_response(xml_content: str) -> list[dict]:
     ns = {
         "atom": "http://www.w3.org/2005/Atom",
         "arxiv": "http://arxiv.org/schemas/atom",

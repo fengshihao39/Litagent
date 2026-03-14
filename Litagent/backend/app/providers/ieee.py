@@ -6,7 +6,6 @@ import json
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Dict, List, Optional
 
 from Litagent.backend.app.core.config import get_ieee_api_key
 from Litagent.backend.app.providers.base import ProviderBase
@@ -24,9 +23,9 @@ class IeeeProvider(ProviderBase):
         self,
         query: str,
         max_results: int = 8,
-        start_year: Optional[int] = None,
-        end_year: Optional[int] = None,
-    ) -> List[Dict]:
+        start_year: int | None = None,
+        end_year: int | None = None,
+    ) -> list[dict]:
         return search_papers(
             query,
             max_results=max_results,
@@ -38,9 +37,9 @@ class IeeeProvider(ProviderBase):
 def search_papers(
     query: str,
     max_results: int = 8,
-    start_year: Optional[int] = None,
-    end_year: Optional[int] = None,
-) -> List[Dict]:
+    start_year: int | None = None,
+    end_year: int | None = None,
+) -> list[dict]:
     """在 IEEE 上搜索文献。
 
     Args:
@@ -111,12 +110,12 @@ def search_papers(
     return _parse_ieee_response(content)
 
 
-def _extract_ieee_authors(article: Dict) -> List[str]:
+def _extract_ieee_authors(article: dict) -> list[str]:
     authors_data = article.get("authors", {}).get("authors", [])
     return [auth.get("full_name", "") for auth in authors_data if auth.get("full_name")]
 
 
-def _extract_ieee_keywords(article: Dict) -> List[str]:
+def _extract_ieee_keywords(article: dict) -> list[str]:
     kw_data = article.get("index_terms", {})
     keywords = []
     for kw_group in kw_data.values():
@@ -124,7 +123,7 @@ def _extract_ieee_keywords(article: Dict) -> List[str]:
     return keywords
 
 
-def _extract_ieee_abs_url(article: Dict, article_number: str) -> str:
+def _extract_ieee_abs_url(article: dict, article_number: str) -> str:
     return article.get("html_url") or (
         f"https://ieeexplore.ieee.org/document/{article_number}"
         if article_number
@@ -132,7 +131,7 @@ def _extract_ieee_abs_url(article: Dict, article_number: str) -> str:
     )
 
 
-def _parse_ieee_article(article: Dict) -> Optional[Dict]:
+def _parse_ieee_article(article: dict) -> dict | None:
     title = article.get("title", "").strip()
     if not title:
         return None
@@ -159,7 +158,7 @@ def _parse_ieee_article(article: Dict) -> Optional[Dict]:
     }
 
 
-def _parse_ieee_response(json_content: str) -> List[Dict]:
+def _parse_ieee_response(json_content: str) -> list[dict]:
     try:
         data = json.loads(json_content)
     except json.JSONDecodeError as e:
@@ -169,7 +168,7 @@ def _parse_ieee_response(json_content: str) -> List[Dict]:
     if not articles:
         return []
 
-    papers: List[Dict] = []
+    papers: list[dict] = []
     for article in articles:
         parsed = _parse_ieee_article(article)
         if parsed:

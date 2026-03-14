@@ -7,7 +7,6 @@ import io
 import json
 import re
 import threading
-from typing import Dict, List, Optional
 
 from fastapi import UploadFile
 
@@ -25,7 +24,7 @@ def _search_arxiv(
     query: str,
     per_source: int,
     use_arxiv_categories: bool,
-) -> List[Dict]:
+) -> list[dict]:
     papers = arxiv_search(
         query,
         max_results=per_source,
@@ -37,35 +36,35 @@ def _search_arxiv(
     return papers
 
 
-def _search_semantic(query: str, per_source: int) -> List[Dict]:
+def _search_semantic(query: str, per_source: int) -> list[dict]:
     return semantic_search(query, max_results=per_source)
 
 
 def _search_ieee(
     query: str,
     per_source: int,
-    year_from: Optional[int],
-) -> List[Dict]:
+    year_from: int | None,
+) -> list[dict]:
     return ieee_search(query, max_results=per_source, start_year=year_from)
 
 
 def _search_crossref(
     query: str,
     per_source: int,
-    year_from: Optional[int],
-) -> List[Dict]:
+    year_from: int | None,
+) -> list[dict]:
     return crossref_search(query, max_results=per_source, min_year=year_from)
 
 
 def _run_parallel_search(
     query: str,
     per_source: int,
-    year_from: Optional[int],
+    year_from: int | None,
     use_arxiv_categories: bool,
-    sources: List[str],
-) -> Dict[str, List[Dict]]:
+    sources: list[str],
+) -> dict[str, list[dict]]:
     lock = threading.Lock()
-    results: Dict[str, List[Dict]] = {}
+    results: dict[str, list[dict]] = {}
 
     def run_source(source: str, fn) -> None:
         try:
@@ -97,9 +96,9 @@ def _run_parallel_search(
 
 
 def _collect_papers(
-    results: Dict[str, List[Dict]], source_order: List[str]
-) -> List[Dict]:
-    all_papers: List[Dict] = []
+    results: dict[str, list[dict]], source_order: list[str]
+) -> list[dict]:
+    all_papers: list[dict] = []
     for source in source_order:
         for p in results.get(source, []):
             if "error" not in p:
@@ -107,11 +106,11 @@ def _collect_papers(
     return all_papers
 
 
-def _dedupe_papers(papers: List[Dict]) -> List[Dict]:
+def _dedupe_papers(papers: list[dict]) -> list[dict]:
     seen_titles: set = set()
     seen_arxiv_ids: set = set()
     seen_dois: set = set()
-    deduped: List[Dict] = []
+    deduped: list[dict] = []
 
     for p in papers:
         arxiv_id = p.get("arxiv_id", "")
@@ -137,11 +136,11 @@ def _dedupe_papers(papers: List[Dict]) -> List[Dict]:
     return deduped
 
 
-def _filter_by_year(papers: List[Dict], year_from: Optional[int]) -> List[Dict]:
+def _filter_by_year(papers: list[dict], year_from: int | None) -> list[dict]:
     if year_from is None:
         return papers
 
-    filtered: List[Dict] = []
+    filtered: list[dict] = []
     for p in papers:
         py = _get_year(p)
         if py is None or py >= year_from:
@@ -149,8 +148,8 @@ def _filter_by_year(papers: List[Dict], year_from: Optional[int]) -> List[Dict]:
     return filtered
 
 
-def _bucket_by_source(papers: List[Dict]) -> Dict[str, List[Dict]]:
-    buckets: Dict[str, List[Dict]] = {}
+def _bucket_by_source(papers: list[dict]) -> dict[str, list[dict]]:
+    buckets: dict[str, list[dict]] = {}
     for p in papers:
         src = p.get("source", "unknown")
         buckets.setdefault(src, []).append(p)
@@ -158,11 +157,11 @@ def _bucket_by_source(papers: List[Dict]) -> Dict[str, List[Dict]]:
 
 
 def _round_robin_pick(
-    buckets: Dict[str, List[Dict]],
-    source_order: List[str],
+    buckets: dict[str, list[dict]],
+    source_order: list[str],
     max_results: int,
-) -> List[Dict]:
-    final: List[Dict] = []
+) -> list[dict]:
+    final: list[dict] = []
     while len(final) < max_results:
         added = False
         for src in source_order:
@@ -179,10 +178,10 @@ def _round_robin_pick(
 def multi_search(
     query: str,
     max_results: int = 10,
-    sources: Optional[List[str]] = None,
-    year_from: Optional[int] = None,
+    sources: list[str] | None = None,
+    year_from: int | None = None,
     use_arxiv_categories: bool = True,
-) -> List[Dict]:
+) -> list[dict]:
     """多源并联搜索服务。
 
     Args:
@@ -219,13 +218,13 @@ def multi_search(
 
 async def search_papers_service(
     query: str,
-    file: Optional[UploadFile],
-    year_from: Optional[int],
+    file: UploadFile | None,
+    year_from: int | None,
     max_results: int,
     use_arxiv_categories: bool,
 ) -> SearchResponse:
     """Search entry used by API layer."""
-    results: List[Dict] = []
+    results: list[dict] = []
 
     if query.strip():
         search_queries = get_search_queries(query.strip())
@@ -259,7 +258,7 @@ async def search_papers_service(
     )
 
 
-def _normalize(paper: Dict) -> Dict:
+def _normalize(paper: dict) -> dict:
     published = paper.get("published", "") or ""
     year_match = re.match(r"(\d{4})", published)
     year = int(year_match.group(1)) if year_match else None
@@ -297,7 +296,7 @@ def _normalize(paper: Dict) -> Dict:
     }
 
 
-def _extract_keywords(text: str, n: int = 5) -> List[str]:
+def _extract_keywords(text: str, n: int = 5) -> list[str]:
     stopwords = {
         "the",
         "a",
@@ -337,7 +336,7 @@ def _extract_keywords(text: str, n: int = 5) -> List[str]:
         "based",
     }
     words = re.findall(r"[a-zA-Z]{4,}", text.lower())
-    freq: Dict[str, int] = {}
+    freq: dict[str, int] = {}
     for w in words:
         if w not in stopwords:
             freq[w] = freq.get(w, 0) + 1
@@ -345,7 +344,7 @@ def _extract_keywords(text: str, n: int = 5) -> List[str]:
     return sorted_words[:n]
 
 
-async def _parse_upload(file: UploadFile) -> List[Dict]:
+async def _parse_upload(file: UploadFile) -> list[dict]:
     content = await file.read()
     filename = file.filename or ""
 
@@ -361,7 +360,7 @@ async def _parse_upload(file: UploadFile) -> List[Dict]:
     return []
 
 
-def _parse_json(content: bytes) -> List[Dict]:
+def _parse_json(content: bytes) -> list[dict]:
     data = json.loads(content)
     if isinstance(data, list):
         return [_normalize_upload(p) for p in data]
@@ -370,7 +369,7 @@ def _parse_json(content: bytes) -> List[Dict]:
     return []
 
 
-def _parse_bibtex(text: str) -> List[Dict]:
+def _parse_bibtex(text: str) -> list[dict]:
     papers = []
     entries = re.findall(r"@\w+\{[^@]+\}", text, re.DOTALL)
 
@@ -411,7 +410,7 @@ def _parse_bibtex(text: str) -> List[Dict]:
     return papers
 
 
-def _parse_csv(text: str) -> List[Dict]:
+def _parse_csv(text: str) -> list[dict]:
     papers = []
     reader = csv.DictReader(io.StringIO(text))
     for row in reader:
@@ -440,7 +439,7 @@ def _parse_csv(text: str) -> List[Dict]:
     return papers
 
 
-def _normalize_upload(p: Dict) -> Dict:
+def _normalize_upload(p: dict) -> dict:
     year = p.get("year")
     if isinstance(year, str) and year.isdigit():
         year = int(year)
@@ -463,7 +462,7 @@ def _normalize_title(title: str) -> str:
     return title.lower().strip().replace(" ", "").replace("-", "")[:60]
 
 
-def _get_year(paper: Dict) -> Optional[int]:
+def _get_year(paper: dict) -> int | None:
     year = paper.get("year")
     if isinstance(year, int):
         return year

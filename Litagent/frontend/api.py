@@ -4,7 +4,7 @@
 """
 
 import os
-from typing import Any, Dict, List
+from typing import Any
 
 import requests
 import streamlit as st
@@ -17,7 +17,7 @@ API_BASE_URL = os.getenv("LITAGENT_FRONTEND_API_URL", "http://localhost:8000")
 
 def fetch_papers(
     query: str, uploaded_file, search_params: dict
-) -> List[Dict[str, Any]]:
+) -> list[dict[str, Any]]:
     """该函数向后端发送搜索请求。
 
     Args:
@@ -53,7 +53,7 @@ def fetch_papers(
         return _get_demo_results()
 
 
-def _get_demo_results() -> List[Dict[str, Any]]:
+def _get_demo_results() -> list[dict[str, Any]]:
     return [
         {
             "title": "Transformer-based Literature Review Agent",

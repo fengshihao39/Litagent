@@ -6,13 +6,12 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Dict
 
 ROOT_DIR = Path(__file__).resolve().parents[4]
 ENV_PATH = ROOT_DIR / ".env"
 
 
-def _parse_env_line(line: str) -> Dict[str, str]:
+def _parse_env_line(line: str) -> dict[str, str]:
     if "=" not in line:
         return {}
     key, value = line.split("=", 1)

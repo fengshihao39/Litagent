@@ -2,8 +2,6 @@
 Litagent - LLM 对接服务
 """
 
-from typing import List
-
 from openai import OpenAI
 
 from Litagent.backend.app.core.config import get_deepseek_api_key
@@ -36,7 +34,7 @@ def _call_deepseek(query: str) -> str:
     return (resp.choices[0].message.content or "").strip()
 
 
-def get_search_queries(user_input: str) -> List[str]:
+def get_search_queries(user_input: str) -> list[str]:
     """使用 DeepSeek 生成查询条目。
 
     Args:

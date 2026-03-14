@@ -2,17 +2,15 @@
 Litagent - FastAPI 后端搜索接口基类
 """
 
-from typing import Dict, List
-
 
 class ProviderBase:
     """搜索接口基类。"""
 
     name: str = "base"
 
-    def search_papers(self, query: str, max_results: int = 8) -> List[Dict]:
+    def search_papers(self, query: str, max_results: int = 8) -> list[dict]:
         """搜索文献的接口。
-        
+
         这是一个基类，需要各个子接口的实现。
 
         Args:
