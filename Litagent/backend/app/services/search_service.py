@@ -1,79 +1,173 @@
-"""
-星火文献 Agent - FastAPI 后端服务
-提供 HTTP 接口供 Streamlit 前端调用
-
-运行方式：
-    source venv/bin/activate
-    uvicorn xinghuo_agent.api.app:app --host 0.0.0.0 --port 8000 --reload
-
-接口：
-    POST /search   搜索论文（关键词 + 可选文件上传 + 年份过滤）
-    GET  /health   健康检查
-"""
+"""Search service orchestrating translation, multi-source retrieval, and normalization."""
 
 import json
 import re
+import threading
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, File, Form, UploadFile
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import UploadFile
 
-from Litagent.services.query.query_translator import get_search_queries, is_chinese
-from Litagent.services.search.multi_search import multi_search
-
-app = FastAPI(
-    title="星火文献 Agent API",
-    description="西安电子科技大学 · 第37届星火杯参赛项目",
-    version="2.0.0",
+from Litagent.backend.app.providers.arxiv import search_papers as arxiv_search
+from Litagent.backend.app.providers.crossref import search_papers as crossref_search
+from Litagent.backend.app.providers.ieee import search_papers as ieee_search
+from Litagent.backend.app.providers.semantic_scholar import (
+    search_papers as semantic_search,
 )
-
-# 允许前端跨域访问（Streamlit 和 FastAPI 端口不同）
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+from Litagent.backend.app.services.llm_service import get_search_queries, is_chinese
 
 
-# ── 健康检查 ─────────────────────────────────────────────
-@app.get("/health")
-def health():
-    return {"status": "ok", "service": "星火文献 Agent", "version": "2.0.0"}
+def multi_search(
+    query: str,
+    max_results: int = 10,
+    sources: Optional[List[str]] = None,
+    year_from: Optional[int] = None,
+    use_arxiv_categories: bool = True,
+) -> List[Dict]:
+    """
+    四源并联搜索：arXiv + Semantic Scholar + IEEE Xplore + Crossref
+    """
+    if sources is None:
+        sources = ["arxiv", "semantic_scholar", "ieee", "crossref"]
+
+    per_source = max(max_results, 8)
+
+    results: Dict[str, List[Dict]] = {}
+    errors: Dict[str, str] = {}
+    lock = threading.Lock()
+
+    def run_arxiv() -> None:
+        try:
+            papers = arxiv_search(
+                query,
+                max_results=per_source,
+                use_default_categories=use_arxiv_categories,
+            )
+            for p in papers:
+                if "error" not in p:
+                    p.setdefault("source", "arxiv")
+            with lock:
+                results["arxiv"] = papers
+        except Exception as e:
+            with lock:
+                errors["arxiv"] = str(e)
+
+    def run_semantic() -> None:
+        try:
+            papers = semantic_search(query, max_results=per_source)
+            with lock:
+                results["semantic_scholar"] = papers
+        except Exception as e:
+            with lock:
+                errors["semantic_scholar"] = str(e)
+
+    def run_ieee() -> None:
+        try:
+            papers = ieee_search(query, max_results=per_source, start_year=year_from)
+            with lock:
+                results["ieee"] = papers
+        except Exception as e:
+            with lock:
+                errors["ieee"] = str(e)
+
+    def run_crossref() -> None:
+        try:
+            papers = crossref_search(query, max_results=per_source, min_year=year_from)
+            with lock:
+                results["crossref"] = papers
+        except Exception as e:
+            with lock:
+                errors["crossref"] = str(e)
+
+    threads = []
+    if "arxiv" in sources:
+        threads.append(threading.Thread(target=run_arxiv))
+    if "semantic_scholar" in sources:
+        threads.append(threading.Thread(target=run_semantic))
+    if "ieee" in sources:
+        threads.append(threading.Thread(target=run_ieee))
+    if "crossref" in sources:
+        threads.append(threading.Thread(target=run_crossref))
+
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join(timeout=25)
+
+    all_papers: List[Dict] = []
+    for source in ["semantic_scholar", "arxiv", "crossref", "ieee"]:
+        source_papers = results.get(source, [])
+        for p in source_papers:
+            if "error" not in p:
+                all_papers.append(p)
+
+    seen_titles: set = set()
+    seen_arxiv_ids: set = set()
+    seen_dois: set = set()
+    deduped: List[Dict] = []
+
+    for p in all_papers:
+        arxiv_id = p.get("arxiv_id", "")
+        doi = p.get("doi", "")
+        title_key = _normalize_title(p.get("title", ""))
+
+        if arxiv_id and arxiv_id in seen_arxiv_ids:
+            continue
+        if doi and doi in seen_dois:
+            continue
+        if title_key and title_key in seen_titles:
+            continue
+
+        if arxiv_id:
+            seen_arxiv_ids.add(arxiv_id)
+        if doi:
+            seen_dois.add(doi)
+        if title_key:
+            seen_titles.add(title_key)
+
+        deduped.append(p)
+
+    if year_from is not None:
+        filtered_by_year = []
+        for p in deduped:
+            py = _get_year(p)
+            if py is None or py >= year_from:
+                filtered_by_year.append(p)
+        deduped = filtered_by_year
+
+    buckets: Dict[str, List[Dict]] = {}
+    for p in deduped:
+        src = p.get("source", "unknown")
+        buckets.setdefault(src, []).append(p)
+
+    final: List[Dict] = []
+    source_order = ["semantic_scholar", "arxiv", "crossref", "ieee"]
+    while len(final) < max_results:
+        added = False
+        for src in source_order:
+            if len(final) >= max_results:
+                break
+            if buckets.get(src):
+                final.append(buckets[src].pop(0))
+                added = True
+        if not added:
+            break
+
+    return final
 
 
-# ── 主搜索接口 ───────────────────────────────────────────
-@app.post("/search")
-async def search(
-    query: str = Form(default=""),
-    file: Optional[UploadFile] = File(default=None),
-    year_from: Optional[int] = Form(default=None),
-    max_results: int = Form(default=10),
-    use_domain_vocab: bool = Form(default=True),
-    use_arxiv_categories: bool = Form(default=True),
+async def search_papers_service(
+    query: str,
+    file: Optional[UploadFile],
+    year_from: Optional[int],
+    max_results: int,
+    use_domain_vocab: bool,
+    use_arxiv_categories: bool,
 ) -> Dict[str, Any]:
-    """
-    搜索论文接口
-
-    参数：
-        query       - 关键词（支持中英文）
-        file        - 可选，上传的 BibTeX/JSON/CSV 文件（解析后合并到结果）
-        year_from   - 可选，最早发表年份过滤（如 2020）
-        max_results - 返回数量，默认 10
-
-    返回：
-        {
-          "results": [ {title, abstract, authors, year, keywords, venue, doi, ...} ],
-          "translated_query": str,   # 若输入为中文，返回翻译后的英文查询
-          "total": int
-        }
-    """
+    """Search entry used by API layer."""
     results: List[Dict] = []
     translated_query = query
 
-    # 1. 关键词搜索（多源并联）
     if query.strip():
-        # 查询翻译（中文 → 英文）
         search_queries = get_search_queries(
             query.strip(),
             use_domain_vocab=use_domain_vocab,
@@ -91,12 +185,10 @@ async def search(
             if "error" not in p:
                 results.append(_normalize(p))
 
-    # 2. 文件解析（若上传了文件）
     if file is not None:
         file_papers = await _parse_upload(file)
         results.extend(file_papers)
 
-    # 3. 去重（按标题）
     seen = set()
     deduped = []
     for p in results:
@@ -112,22 +204,17 @@ async def search(
     }
 
 
-# ── 字段标准化：把后端格式转成前端期望格式 ───────────────
 def _normalize(paper: Dict) -> Dict:
     """将 multi_search 返回的字段映射到前端期望的字段"""
-
-    # year: 从 "2024-01-15" 或 "2024" 中提取整数
     published = paper.get("published", "") or ""
     year_match = re.match(r"(\d{4})", published)
     year = int(year_match.group(1)) if year_match else None
 
-    # keywords: 优先用 categories，没有就从摘要粗提
     categories = paper.get("categories", []) or []
     keywords = [c for c in categories if c] if categories else []
     if not keywords:
         keywords = _extract_keywords(paper.get("summary", ""))
 
-    # venue: S2 有，arXiv 没有就标注来源
     source = paper.get("source", "")
     venue = paper.get("venue", "") or ""
     if not venue:
@@ -137,7 +224,6 @@ def _normalize(paper: Dict) -> Dict:
             "ieee": "IEEE",
         }.get(source, "arXiv")
 
-    # doi: S2 有 doi，arXiv 用 arxiv_id 凑
     doi = paper.get("doi", "") or ""
     if not doi and paper.get("arxiv_id"):
         doi = f"arXiv:{paper['arxiv_id']}"
@@ -158,7 +244,6 @@ def _normalize(paper: Dict) -> Dict:
 
 
 def _extract_keywords(text: str, n: int = 5) -> List[str]:
-    """从摘要中粗提关键词（停用词过滤 + 高频名词）"""
     stopwords = {
         "the",
         "a",
@@ -206,7 +291,6 @@ def _extract_keywords(text: str, n: int = 5) -> List[str]:
     return sorted_words[:n]
 
 
-# ── 文件解析 ─────────────────────────────────────────────
 async def _parse_upload(file: UploadFile) -> List[Dict]:
     """解析上传的 BibTeX / JSON / CSV 文件"""
     content = await file.read()
@@ -215,9 +299,9 @@ async def _parse_upload(file: UploadFile) -> List[Dict]:
     try:
         if filename.endswith(".json"):
             return _parse_json(content)
-        elif filename.endswith(".bib") or filename.endswith(".bibtex"):
+        if filename.endswith(".bib") or filename.endswith(".bibtex"):
             return _parse_bibtex(content.decode("utf-8", errors="ignore"))
-        elif filename.endswith(".csv"):
+        if filename.endswith(".csv"):
             return _parse_csv(content.decode("utf-8", errors="ignore"))
     except Exception:
         pass
@@ -275,7 +359,8 @@ def _parse_bibtex(text: str) -> List[Dict]:
 
 def _parse_csv(text: str) -> List[Dict]:
     """解析 CSV，假设列名包含 title/authors/year/abstract 等"""
-    import csv, io
+    import csv
+    import io
 
     papers = []
     reader = csv.DictReader(io.StringIO(text))
@@ -323,3 +408,21 @@ def _normalize_upload(p: Dict) -> Dict:
         "citation_count": p.get("citation_count", 0),
         "tldr": p.get("tldr", ""),
     }
+
+
+def _normalize_title(title: str) -> str:
+    """标题标准化，用于去重比较"""
+    return title.lower().strip().replace(" ", "").replace("-", "")[:60]
+
+
+def _get_year(paper: Dict) -> Optional[int]:
+    """从论文 dict 中提取发表年份整数，无法获取返回 None"""
+    year = paper.get("year")
+    if isinstance(year, int):
+        return year
+    published = paper.get("published", "") or ""
+    if published:
+        m = re.search(r"(20\d{2}|19\d{2})", str(published))
+        if m:
+            return int(m.group(1))
+    return None

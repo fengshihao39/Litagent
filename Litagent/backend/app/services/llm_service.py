@@ -4,29 +4,22 @@
   1. 检测查询语言（中文 / 英文）
   2. 中文关键词 → 英文专业术语（整体翻译，不拆词）
   3. 同义词/近义词扩展，生成多个搜索变体
-  4. 输出用于 multi_search 的最终查询串
-
-特别处理：
-  - 中文专业词组（如"波达估计"）作为整体翻译，不拆字
-  - 电子信息 / AI / 雷达信号处理领域优化
+  4. 输出用于搜索的最终查询串
 """
 
 import json
-import re
 from typing import Dict, List, Tuple
 
 from openai import OpenAI
 
-from Litagent.config.settings import get_deepseek_api_key
+from ..core.config import get_deepseek_api_key
 
-# ── DeepSeek 客户端 ───────────────────────────────────────
 
 _client = OpenAI(
     api_key=get_deepseek_api_key(),
     base_url="https://api.deepseek.com",
 )
 
-# ── 常用领域词汇预置映射（减少 API 调用，提高准确率）────────
 
 DOMAIN_VOCAB: Dict[str, str] = {
     # 雷达 / 信号处理
@@ -78,16 +71,10 @@ DOMAIN_VOCAB: Dict[str, str] = {
 }
 
 
-# ── 语言检测 ─────────────────────────────────────────────
-
-
 def is_chinese(text: str) -> bool:
     """判断文本是否主要是中文"""
     chinese_chars = sum(1 for c in text if "\u4e00" <= c <= "\u9fff")
     return chinese_chars > len(text) * 0.2
-
-
-# ── 预置词汇替换 ─────────────────────────────────────────
 
 
 def apply_domain_vocab(text: str) -> Tuple[str, List[str]]:
@@ -100,11 +87,8 @@ def apply_domain_vocab(text: str) -> Tuple[str, List[str]]:
     for zh, en in DOMAIN_VOCAB.items():
         if zh in result:
             result = result.replace(zh, en)
-            replacements.append(f"{zh} → {en}")
+            replacements.append(f"{zh} -> {en}")
     return result, replacements
-
-
-# ── DeepSeek 翻译 + 扩展 ─────────────────────────────────
 
 
 def translate_and_expand(query: str, use_domain_vocab: bool = True) -> Dict:
@@ -112,17 +96,16 @@ def translate_and_expand(query: str, use_domain_vocab: bool = True) -> Dict:
     主函数：翻译中文查询并扩展同义词
     返回：
     {
-        "original": str,           # 原始查询
-        "translated": str,         # 主翻译结果
-        "variants": [str, ...],    # 搜索变体（含同义词扩展）
-        "language": "zh" | "en",
-        "notes": str               # 翻译说明
+            "original": str,
+            "translated": str,
+            "variants": [str, ...],
+            "language": "zh" | "en",
+            "notes": str,
     }
     """
     original = query.strip()
 
     if not is_chinese(original):
-        # 英文查询：只做同义词扩展
         variants = _expand_english_query(original)
         return {
             "original": original,
@@ -132,7 +115,6 @@ def translate_and_expand(query: str, use_domain_vocab: bool = True) -> Dict:
             "notes": "英文查询，已扩展同义词变体",
         }
 
-    # 中文查询：先做预置词汇替换（可关闭），再用 DeepSeek 处理剩余部分
     if use_domain_vocab:
         pre_translated, replacements = apply_domain_vocab(original)
     else:
@@ -186,7 +168,6 @@ def translate_and_expand(query: str, use_domain_vocab: bool = True) -> Dict:
         }
 
     except Exception as e:
-        # 降级：使用预置词汇替换结果
         return {
             "original": original,
             "translated": pre_translated,
@@ -225,19 +206,14 @@ Only return the JSON array, nothing else."""
     return [query]
 
 
-# ── 便捷函数：获取最佳搜索查询 ─────────────────────────
-
-
 def get_search_queries(user_input: str, use_domain_vocab: bool = True) -> List[str]:
     """
     给定用户原始输入，返回用于搜索的查询串列表（主查询在前）
-    这是对外暴露的主接口
     """
     result = translate_and_expand(user_input, use_domain_vocab=use_domain_vocab)
     queries = [result["translated"]] + [
         v for v in result["variants"] if v != result["translated"]
     ]
-    # 去重保留顺序
     seen = set()
     unique = []
     for q in queries:
@@ -245,27 +221,3 @@ def get_search_queries(user_input: str, use_domain_vocab: bool = True) -> List[s
             seen.add(q)
             unique.append(q)
     return unique
-
-
-# ── 测试 ─────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    test_cases = [
-        "波达方向估计",
-        "深度学习目标检测",
-        "MUSIC算法阵列信号处理",
-        "transformer attention mechanism",
-        "雷达信号杂波抑制算法",
-    ]
-
-    print("=== 测试 query_translator.py ===\n")
-
-    for query in test_cases:
-        print(f"输入: {query!r}")
-        result = translate_and_expand(query)
-        print(f"  语言: {result['language']}")
-        print(f"  主翻译: {result['translated']}")
-        print(f"  变体: {result['variants']}")
-        if result.get("notes"):
-            print(f"  说明: {result['notes']}")
-        print()

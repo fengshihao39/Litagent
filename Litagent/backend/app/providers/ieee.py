@@ -5,24 +5,35 @@ Key 状态 waiting 时会返回 403，激活后自动生效
 """
 
 import json
-import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from typing import Dict, List, Optional
 
-from Litagent.config.settings import get_ieee_api_key
+from ..core.config import get_ieee_api_key
+from .base import ProviderBase
+
 
 IEEE_API_BASE = "https://ieeexploreapi.ieee.org/api/v1/search/articles"
-
 IEEE_API_KEY = get_ieee_api_key(required=False)
 
-# 西电三大方向对应的 IEEE 分类词
-IEEE_QUERY_TERMS = {
-    "电子信息": "signal processing OR electronic information OR communications",
-    "人工智能": "artificial intelligence OR machine learning OR deep learning",
-    "雷达信号处理": "radar signal processing OR SAR OR target detection",
-}
+
+class IeeeProvider(ProviderBase):
+    name = "ieee"
+
+    def search_papers(
+        self,
+        query: str,
+        max_results: int = 8,
+        start_year: Optional[int] = None,
+        end_year: Optional[int] = None,
+    ) -> List[Dict]:
+        return search_papers(
+            query,
+            max_results=max_results,
+            start_year=start_year,
+            end_year=end_year,
+        )
 
 
 def search_papers(
@@ -31,18 +42,7 @@ def search_papers(
     start_year: Optional[int] = None,
     end_year: Optional[int] = None,
 ) -> List[Dict]:
-    """
-    使用 IEEE Xplore Metadata Search API 搜索论文
-
-    参数:
-        query       : 搜索关键词（英文）
-        max_results : 返回数量（最多 25）
-        start_year  : 起始年份过滤
-        end_year    : 截止年份过滤
-
-    返回:
-        统一格式的论文列表
-    """
+    """使用 IEEE Xplore Metadata Search API 搜索论文"""
     if not IEEE_API_KEY:
         return [
             {
@@ -80,20 +80,19 @@ def search_papers(
                     "source": "ieee",
                 }
             ]
-        elif e.code == 429:
+        if e.code == 429:
             return [
                 {
                     "error": "IEEE API 今日调用次数已达上限（200次/天）。",
                     "source": "ieee",
                 }
             ]
-        else:
-            return [
-                {
-                    "error": f"IEEE API 请求失败 HTTP {e.code}: {e.reason}",
-                    "source": "ieee",
-                }
-            ]
+        return [
+            {
+                "error": f"IEEE API 请求失败 HTTP {e.code}: {e.reason}",
+                "source": "ieee",
+            }
+        ]
     except Exception as e:
         return [{"error": f"IEEE 网络请求失败: {e}", "source": "ieee"}]
 
@@ -119,20 +118,15 @@ def _parse_response(json_content: str) -> List[Dict]:
         if not title:
             continue
 
-        # 作者
         authors_data = a.get("authors", {}).get("authors", [])
         authors = [
             auth.get("full_name", "") for auth in authors_data if auth.get("full_name")
         ]
 
-        # 发表时间
         pub_year = str(a.get("publication_year") or "")
         published = f"{pub_year}-01-01" if pub_year else "unknown"
 
-        # 期刊/会议
         venue = a.get("publication_title", "")
-
-        # 链接
         doi = a.get("doi", "")
         article_number = a.get("article_number", "")
         abs_url = a.get("html_url") or (
@@ -142,7 +136,6 @@ def _parse_response(json_content: str) -> List[Dict]:
         )
         pdf_url = a.get("pdf_url", "")
 
-        # 关键词
         kw_data = a.get("index_terms", {})
         keywords = []
         for kw_group in kw_data.values():
@@ -169,37 +162,3 @@ def _parse_response(json_content: str) -> List[Dict]:
         )
 
     return papers
-
-
-def format_paper_brief(paper: Dict, index: Optional[int] = None) -> str:
-    """格式化单篇 IEEE 论文"""
-    if "error" in paper:
-        return f"[IEEE] {paper['error']}"
-
-    prefix = f"[{index}] " if index is not None else ""
-    authors_str = ", ".join(paper["authors"][:3])
-    if len(paper["authors"]) > 3:
-        authors_str += " 等"
-
-    venue_str = f"  |  {paper['venue']}" if paper.get("venue") else ""
-
-    return (
-        f"{prefix}**{paper['title']}**\n"
-        f"   作者: {authors_str}\n"
-        f"   时间: {paper['published']}{venue_str}\n"
-        f"   来源: IEEE Xplore  |  链接: {paper['abs_url']}\n"
-        f"   摘要: {paper['summary'][:200]}...\n"
-    )
-
-
-# ── 测试 ─────────────────────────────────────────────────
-if __name__ == "__main__":
-    print("正在测试 IEEE Xplore 搜索...\n")
-    results = search_papers("transformer radar target detection", max_results=3)
-
-    if results and "error" in results[0]:
-        print(f"状态: {results[0]['error']}")
-    else:
-        print(f"找到 {len(results)} 篇论文：\n")
-        for i, p in enumerate(results, 1):
-            print(format_paper_brief(p, index=i))

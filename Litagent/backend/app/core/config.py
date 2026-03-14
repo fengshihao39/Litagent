@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Dict
 
 
-ROOT_DIR = Path(__file__).resolve().parents[2]
+ROOT_DIR = Path(__file__).resolve().parents[4]
 ENV_PATH = ROOT_DIR / ".env"
 
 
