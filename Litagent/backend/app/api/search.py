@@ -21,7 +21,7 @@ async def search(
     use_domain_vocab: bool = Form(default=True),
     use_arxiv_categories: bool = Form(default=True),
 ) -> SearchResponse:
-    """搜索结果。
+    """向后端发送搜索请求。
 
     Args:
         query (str, optional): 搜索关键词. Defaults to Form(default="").
@@ -32,7 +32,7 @@ async def search(
         use_arxiv_categories (bool, optional): 是否使用 arXiv 分类. Defaults to Form(default=True).
 
     Returns:
-        SearchResponse: 搜索响应体。
+        SearchResponse: 搜索响应。
     """
     return await search_papers_service(
         query=query,
