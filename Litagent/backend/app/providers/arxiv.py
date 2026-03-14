@@ -50,18 +50,19 @@ def search_papers(
     use_default_categories: bool = True,
     sort_by: str = "relevance",
 ) -> List[Dict]:
-    """在 arXiv 上搜索论文。
+    """在 arXiv 上搜索文献。
 
     Args:
         query (str): 搜索关键词。
         max_results (int, optional): 搜索返回的最大数量. Defaults to 8.
-        categories (Optional[List[str]], optional): 论文的分类. Defaults to None.
-        use_default_categories (bool, optional): 是否使用默认的分类对论文进行筛选. Defaults to True.
-        sort_by (str, optional): 论文的排序方法. Defaults to "relevance".
+        categories (Optional[List[str]], optional): 文献的分类. Defaults to None.
+        use_default_categories (bool, optional): 是否使用默认的分类对文献进行筛选. Defaults to True.
+        sort_by (str, optional): 文献的排序方法. Defaults to "relevance".
 
     Returns:
-        List[Dict]: 返回搜索到的论文或报错信息。
+        List[Dict]: 返回搜索到的文献或报错信息。
     """
+
     if categories is None:
         categories = DEFAULT_CATEGORIES if use_default_categories else []
 
@@ -83,8 +84,10 @@ def search_papers(
     try:
         with urllib.request.urlopen(url, timeout=20) as response:
             content = response.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        return [{"error": f"arXiv API 错误 {e.code}: {e}", "source": "arXiv"}]
     except (urllib.error.URLError, TimeoutError) as e:
-        return [{"error": f"网络请求失败: {e}"}]
+        return [{"error": f"arXiv API 网络请求失败: {e}", "source": "arXiv"}]
 
     return _parse_arxiv_response(content)
 
