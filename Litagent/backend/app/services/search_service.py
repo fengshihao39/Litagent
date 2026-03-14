@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import UploadFile
 
+from Litagent.backend.app.models.response import SearchResponse
 from Litagent.backend.app.providers.arxiv import search_papers as arxiv_search
 from Litagent.backend.app.providers.crossref import search_papers as crossref_search
 from Litagent.backend.app.providers.ieee import search_papers as ieee_search
@@ -162,7 +163,7 @@ async def search_papers_service(
     max_results: int,
     use_domain_vocab: bool,
     use_arxiv_categories: bool,
-) -> Dict[str, Any]:
+) -> SearchResponse:
     """Search entry used by API layer."""
     results: List[Dict] = []
     translated_query = query
@@ -197,11 +198,11 @@ async def search_papers_service(
             seen.add(key)
             deduped.append(p)
 
-    return {
-        "results": deduped,
-        "translated_query": translated_query if is_chinese(query) else query,
-        "total": len(deduped),
-    }
+    return SearchResponse(
+        results=deduped,
+        translated_query=translated_query if is_chinese(query) else query,
+        total=len(deduped),
+    )
 
 
 def _normalize(paper: Dict) -> Dict:
