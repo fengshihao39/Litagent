@@ -7,6 +7,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
+from litagent.backend.app.core.config import get_arxiv_api_base
 from litagent.backend.app.providers.base import ProviderBase
 
 XIDIAN_CATEGORIES = {
@@ -17,7 +18,7 @@ XIDIAN_CATEGORIES = {
 
 DEFAULT_CATEGORIES = list({cat for cats in XIDIAN_CATEGORIES.values() for cat in cats})
 
-ARXIV_API_BASE = "https://export.arxiv.org/api/query"
+ARXIV_API_BASE = get_arxiv_api_base()
 
 
 class ArxivProvider(ProviderBase):

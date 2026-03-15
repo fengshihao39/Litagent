@@ -7,14 +7,23 @@
 """
 
 import datetime
+import os
 
 import streamlit as st
+from dotenv import load_dotenv
 
 from litagent.frontend.api import fetch_papers
 from litagent.frontend.components import plot_keyword_freq, plot_year_trend
 from litagent.frontend.utils import to_bibtex
 
 st.set_page_config(page_title="Litagent 文献智能助手", page_icon="📚", layout="wide")
+
+load_dotenv()
+
+IMAGE_BACKGROUND = os.getenv(
+    "IMAGE_BACKGROUND",
+    "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1400&q=80",
+)
 
 
 def _render_header() -> None:
@@ -75,10 +84,7 @@ def _render_sidebar():
 
 
 def _render_empty_state() -> None:
-    st.image(
-        "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1400&q=80",
-        width=1200,
-    )  # TODO Image 的 URL 转到配置里，不要明文写死
+    st.image(IMAGE_BACKGROUND, width=1200)
 
 
 def _build_search_params(  # noqa PLR0913
