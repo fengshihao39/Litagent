@@ -7,10 +7,10 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from litagent.backend.app.core.config import get_ieee_api_key
+from litagent.backend.app.core.config import get_ieee_api_base, get_ieee_api_key
 from litagent.backend.app.providers.base import ProviderBase
 
-IEEE_API_BASE = "https://ieeexploreapi.ieee.org/api/v1/search/articles"
+IEEE_API_BASE = get_ieee_api_base()
 IEEE_API_KEY = get_ieee_api_key(required=False)
 
 
@@ -84,14 +84,14 @@ def search_papers(
         with urllib.request.urlopen(req, timeout=20) as response:
             content = response.read().decode("utf-8")
     except urllib.error.HTTPError as e:
-        if e.code == 403:
+        if e.code == 403:  # noqa PLR2004
             return [
                 {
                     "error": "IEEE API Key 尚未激活，请等待审核通过后再试。",
                     "source": "ieee",
                 }
             ]
-        if e.code == 429:
+        if e.code == 429:  # noqa PLR2004
             return [
                 {
                     "error": "IEEE API 今日调用次数已达上限。",

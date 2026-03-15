@@ -8,9 +8,13 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from litagent.backend.app.core.config import (
+    get_crossref_api_base,
+    get_provider_user_agent,
+)
 from litagent.backend.app.providers.base import ProviderBase
 
-CROSSREF_API_BASE = "https://api.crossref.org/works"
+CROSSREF_API_BASE = get_crossref_api_base()
 
 
 class CrossrefProvider(ProviderBase):
@@ -51,8 +55,7 @@ def search_papers(
         List[Dict]: 返回搜索到的文献或报错信息。
     """
 
-    polite_email = "25209100302@stu.xidian.edu.cn"
-    user_agent = f"StarfireAgent/1.0 (mailto:{polite_email})"
+    user_agent = get_provider_user_agent()
 
     params = {
         "query": query,
@@ -83,9 +86,9 @@ def search_papers(
 
 
 def _format_published_date(date_parts: list[int]) -> str:
-    if len(date_parts) >= 3:
+    if len(date_parts) >= 3:  # noqa PLR2004
         return f"{date_parts[0]}-{date_parts[1]:02d}-{date_parts[2]:02d}"
-    if len(date_parts) == 2:
+    if len(date_parts) == 2:  # noqa PLR2004
         return f"{date_parts[0]}-{date_parts[1]:02d}-01"
     if len(date_parts) == 1:
         return f"{date_parts[0]}-01-01"

@@ -7,9 +7,13 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from litagent.backend.app.core.config import (
+    get_provider_user_agent,
+    get_semantic_scholar_api_base,
+)
 from litagent.backend.app.providers.base import ProviderBase
 
-SEMANTIC_SCHOLAR_API_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
+SEMANTIC_SCHOLAR_API_BASE = get_semantic_scholar_api_base()
 
 
 class SemanticScholarProvider(ProviderBase):
@@ -84,7 +88,7 @@ def search_papers(
 
     url = f"{SEMANTIC_SCHOLAR_API_BASE}?{urllib.parse.urlencode(params)}"
     headers = {
-        "User-Agent": "StarfireAgent/1.0 (mailto:25209100302@stu.xidian.edu.cn)",
+        "User-Agent": get_provider_user_agent(),
     }
 
     try:
@@ -92,7 +96,7 @@ def search_papers(
         with urllib.request.urlopen(req, timeout=20) as response:
             content = response.read().decode("utf-8")
     except urllib.error.HTTPError as e:
-        if e.code == 429:
+        if e.code == 429:  # noqa PLR2004
             return [
                 {
                     "error": "Semantic Scholar 接口可能被限流。",

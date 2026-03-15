@@ -46,7 +46,7 @@ def _get_env(name: str, default: str | None = None, required: bool = False) -> s
     if value:
         return value
     if required:
-        raise RuntimeError(f"Missing required env var: {name}. Add it to .env.")
+        raise RuntimeError(f"Missing required env var: {name}. Add it to .env.")  # noqa TRY003
     return default or ""
 
 
@@ -69,6 +69,60 @@ def get_ieee_api_key(required: bool = True) -> str:
         str: IEEE 的 API Key。
     """
     return _get_env("IEEE_API_KEY", required=required)
+
+
+def get_arxiv_api_base() -> str:
+    """获取 arXiv API Base URL。
+
+    Returns:
+        str: arXiv API Base URL。
+    """
+    return _get_env("ARXIV_API_BASE", default="https://export.arxiv.org/api/query")
+
+
+def get_crossref_api_base() -> str:
+    """获取 Crossref API Base URL。
+
+    Returns:
+        str: Crossref API Base URL。
+    """
+    return _get_env("CROSSREF_API_BASE", default="https://api.crossref.org/works")
+
+
+def get_ieee_api_base() -> str:
+    """获取 IEEE API Base URL。
+
+    Returns:
+        str: IEEE API Base URL。
+    """
+    return _get_env(
+        "IEEE_API_BASE",
+        default="https://ieeexploreapi.ieee.org/api/v1/search/articles",
+    )
+
+
+def get_semantic_scholar_api_base() -> str:
+    """获取 Semantic Scholar API Base URL。
+
+    Returns:
+        str: Semantic Scholar API Base URL。
+    """
+    return _get_env(
+        "SEMANTIC_SCHOLAR_API_BASE",
+        default="https://api.semanticscholar.org/graph/v1/paper/search",
+    )
+
+
+def get_provider_user_agent() -> str:
+    """获取 Provider User-Agent。
+
+    Returns:
+        str: Provider User-Agent。
+    """
+    return _get_env(
+        "PROVIDER_USER_AGENT",
+        default="Litagent/1.0 (mailto:your-email@example.com)",
+    )
 
 
 def get_api_base_url() -> str:
