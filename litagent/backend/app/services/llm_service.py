@@ -4,7 +4,7 @@ Litagent - LLM 对接服务
 
 from openai import OpenAI
 
-from Litagent.backend.app.core.config import get_deepseek_api_key
+from litagent.backend.app.core.config import get_deepseek_api_key
 
 _client = OpenAI(
     api_key=get_deepseek_api_key(),
@@ -49,6 +49,7 @@ def get_search_queries(user_input: str) -> list[str]:
         return []
     try:
         response = _call_deepseek(raw)
-        return [response or raw]
     except (ValueError, TypeError, RuntimeError):
         return [raw]
+    else:
+        return [response or raw]

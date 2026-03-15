@@ -15,7 +15,7 @@ class ProviderBase:
 
         Args:
             query (str): 搜索关键词。
-            max_results (int, optional): 最大返回数量. Defaults to 8.
+            max_results (int, optional): 最大返回数量，默认为 8。
 
         Raises:
             NotImplementedError: 接口未实现。

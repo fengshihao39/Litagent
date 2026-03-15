@@ -8,7 +8,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from Litagent.backend.app.providers.base import ProviderBase
+from litagent.backend.app.providers.base import ProviderBase
 
 CROSSREF_API_BASE = "https://api.crossref.org/works"
 
@@ -43,9 +43,9 @@ def search_papers(
 
     Args:
         query (str): 搜索关键词。
-        max_results (int, optional): 搜索返回的最大数量. Defaults to 8.
-        min_year (Optional[int], optional): 返回文献的最早年份. Defaults to None.
-        sort_by (str, optional): 文献的排序方法. Defaults to "relevance".
+        max_results (int, optional): 搜索返回的最大数量，默认为 8。
+        min_year (Optional[int], optional): 返回文献的最早年份。
+        sort_by (str, optional): 文献的排序方法，默认为「相关性」。
 
     Returns:
         List[Dict]: 返回搜索到的文献或报错信息。

@@ -4,7 +4,7 @@ Litagent - FastAPI 后端健康检查接口
 
 from fastapi import APIRouter
 
-from Litagent.backend.app.core.config import get_app_version
+from litagent.backend.app.core.config import get_app_version
 
 router = APIRouter()
 

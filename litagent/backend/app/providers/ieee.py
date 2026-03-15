@@ -7,8 +7,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from Litagent.backend.app.core.config import get_ieee_api_key
-from Litagent.backend.app.providers.base import ProviderBase
+from litagent.backend.app.core.config import get_ieee_api_key
+from litagent.backend.app.providers.base import ProviderBase
 
 IEEE_API_BASE = "https://ieeexploreapi.ieee.org/api/v1/search/articles"
 IEEE_API_KEY = get_ieee_api_key(required=False)
@@ -44,9 +44,9 @@ def search_papers(
 
     Args:
         query (str): 搜索关键词。
-        max_results (int, optional): 搜索返回的最大数量. Defaults to 8.
-        start_year (Optional[int], optional): 返回文献的最早年份. Defaults to None.
-        end_year (Optional[int], optional): 返回文献的最晚年份. Defaults to None.
+        max_results (int, optional): 搜索返回的最大数量，默认为 8。
+        start_year (Optional[int], optional): 返回文献的最早年份。
+        end_year (Optional[int], optional): 返回文献的最晚年份。
 
     Returns:
         List[Dict]: 返回搜索到的文献或报错信息。
