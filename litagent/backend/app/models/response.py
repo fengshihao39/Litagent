@@ -22,7 +22,7 @@ class PaperResult(BaseModel):
 
 
 class SearchResponse(BaseModel):
-    """搜索相应模型。"""
+    """搜索响应模型。"""
 
     results: list[PaperResult]
     total: int
