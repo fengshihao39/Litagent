@@ -44,9 +44,9 @@ def search_papers(
 
     Args:
         query (str): 搜索关键词。
-        max_results (int, optional): 搜索返回的最大数量. Defaults to 8.
-        start_year (Optional[int], optional): 返回文献的最早年份. Defaults to None.
-        end_year (Optional[int], optional): 返回文献的最晚年份. Defaults to None.
+        max_results (int, optional): 搜索返回的最大数量，默认为 8。
+        start_year (Optional[int], optional): 返回文献的最早年份。
+        end_year (Optional[int], optional): 返回文献的最晚年份。
 
     Returns:
         List[Dict]: 返回搜索到的文献或报错信息。

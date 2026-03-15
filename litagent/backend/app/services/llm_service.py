@@ -49,6 +49,7 @@ def get_search_queries(user_input: str) -> list[str]:
         return []
     try:
         response = _call_deepseek(raw)
-        return [response or raw]
     except (ValueError, TypeError, RuntimeError):
         return [raw]
+    else:
+        return [response or raw]

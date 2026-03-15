@@ -45,10 +45,10 @@ def search_papers(
 
     Args:
         query (str): 搜索关键词。
-        max_results (int, optional): 搜索返回的最大数量. Defaults to 8.
-        fields_of_study (Optional[List[str]], optional): 文献的研究领域. Defaults to None.
-        min_citations (int, optional): 文献的最小引用数量. Defaults to 0.
-        sort_by (str, optional): 文献的排序方法. Defaults to "relevance".
+        max_results (int, optional): 搜索返回的最大数量，默认为 8。
+        fields_of_study (Optional[List[str]], optional): 文献的研究领域。
+        min_citations (int, optional): 文献的最小引用数量，默认为 0。
+        sort_by (str, optional): 文献的排序方法，默认为「相关性」。
 
     Returns:
         List[Dict]: 返回搜索到的文献或报错信息。

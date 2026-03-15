@@ -53,10 +53,10 @@ def search_papers(
 
     Args:
         query (str): 搜索关键词。
-        max_results (int, optional): 搜索返回的最大数量. Defaults to 8.
-        categories (Optional[List[str]], optional): 文献的分类. Defaults to None.
-        use_default_categories (bool, optional): 是否使用默认的分类对文献进行筛选. Defaults to True.
-        sort_by (str, optional): 文献的排序方法. Defaults to "relevance".
+        max_results (int, optional): 搜索返回的最大数量，默认为 8。
+        categories (Optional[List[str]], optional): 文献的分类。
+        use_default_categories (bool, optional): 是否使用默认的分类对文献进行筛选。
+        sort_by (str, optional): 文献的排序方法，默认为「相关性」。
 
     Returns:
         List[Dict]: 返回搜索到的文献或报错信息。

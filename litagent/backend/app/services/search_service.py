@@ -186,10 +186,10 @@ def multi_search(
 
     Args:
         query (str): 用户的查询关键词。
-        max_results (int, optional): 最大返回结果数. Defaults to 10.
-        sources (Optional[List[str]], optional): 指定的查询源. Defaults to None.
-        year_from (Optional[int], optional): 查询文献年份的最早值. Defaults to None.
-        use_arxiv_categories (bool, optional): 是否在 arXiv 中限定分类. Defaults to True.
+        max_results (int, optional): 最大返回结果数，默认为 10。
+        sources (Optional[List[str]], optional): 指定的查询源。
+        year_from (Optional[int], optional): 查询文献年份的最早值。
+        use_arxiv_categories (bool, optional): 是否在 arXiv 中限定分类。
 
     Returns:
         List[Dict]: 返回搜索结果。
