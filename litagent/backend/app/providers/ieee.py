@@ -7,8 +7,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from Litagent.backend.app.core.config import get_ieee_api_key
-from Litagent.backend.app.providers.base import ProviderBase
+from litagent.backend.app.core.config import get_ieee_api_key
+from litagent.backend.app.providers.base import ProviderBase
 
 IEEE_API_BASE = "https://ieeexploreapi.ieee.org/api/v1/search/articles"
 IEEE_API_KEY = get_ieee_api_key(required=False)

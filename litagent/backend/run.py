@@ -4,7 +4,7 @@ Litagent - FastAPI 后端入口点
 
 import uvicorn
 
-from Litagent.backend.app.core.config import get_api_host, get_api_port
+from litagent.backend.app.core.config import get_api_host, get_api_port
 
 
 def main() -> None:

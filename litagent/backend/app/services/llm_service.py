@@ -4,7 +4,7 @@ Litagent - LLM 对接服务
 
 from openai import OpenAI
 
-from Litagent.backend.app.core.config import get_deepseek_api_key
+from litagent.backend.app.core.config import get_deepseek_api_key
 
 _client = OpenAI(
     api_key=get_deepseek_api_key(),

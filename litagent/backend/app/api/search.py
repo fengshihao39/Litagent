@@ -4,8 +4,8 @@ Litagent - FastAPI 后端搜索接口
 
 from fastapi import APIRouter, File, Form, UploadFile
 
-from Litagent.backend.app.models.response import SearchResponse
-from Litagent.backend.app.services.search_service import search_papers_service
+from litagent.backend.app.models.response import SearchResponse
+from litagent.backend.app.services.search_service import search_papers_service
 
 router = APIRouter()
 

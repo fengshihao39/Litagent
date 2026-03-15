@@ -10,14 +10,14 @@ import threading
 
 from fastapi import UploadFile
 
-from Litagent.backend.app.models.response import SearchResponse
-from Litagent.backend.app.providers.arxiv import search_papers as arxiv_search
-from Litagent.backend.app.providers.crossref import search_papers as crossref_search
-from Litagent.backend.app.providers.ieee import search_papers as ieee_search
-from Litagent.backend.app.providers.semantic_scholar import (
+from litagent.backend.app.models.response import SearchResponse
+from litagent.backend.app.providers.arxiv import search_papers as arxiv_search
+from litagent.backend.app.providers.crossref import search_papers as crossref_search
+from litagent.backend.app.providers.ieee import search_papers as ieee_search
+from litagent.backend.app.providers.semantic_scholar import (
     search_papers as semantic_search,
 )
-from Litagent.backend.app.services.llm_service import get_search_queries
+from litagent.backend.app.services.llm_service import get_search_queries
 
 
 def _search_arxiv(

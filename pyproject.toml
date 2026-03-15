@@ -26,7 +26,7 @@ dependencies = [
 ]
 
 [tool.hatch.build.targets.wheel]
-packages = ["Litagent"]
+packages = ["litagent"]
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.

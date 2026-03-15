@@ -8,7 +8,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from Litagent.backend.app.providers.base import ProviderBase
+from litagent.backend.app.providers.base import ProviderBase
 
 CROSSREF_API_BASE = "https://api.crossref.org/works"
 

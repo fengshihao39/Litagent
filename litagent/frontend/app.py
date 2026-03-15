@@ -10,9 +10,9 @@ import datetime
 
 import streamlit as st
 
-from Litagent.frontend.api import fetch_papers
-from Litagent.frontend.components import plot_keyword_freq, plot_year_trend
-from Litagent.frontend.utils import to_bibtex
+from litagent.frontend.api import fetch_papers
+from litagent.frontend.components import plot_keyword_freq, plot_year_trend
+from litagent.frontend.utils import to_bibtex
 
 st.set_page_config(page_title="Litagent 文献智能助手", page_icon="📚", layout="wide")
 

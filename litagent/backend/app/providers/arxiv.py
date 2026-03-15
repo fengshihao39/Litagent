@@ -7,7 +7,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 
-from Litagent.backend.app.providers.base import ProviderBase
+from litagent.backend.app.providers.base import ProviderBase
 
 XIDIAN_CATEGORIES = {
     "人工智能": ["cs.AI", "cs.LG", "cs.CV", "cs.CL"],

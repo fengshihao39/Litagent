@@ -7,7 +7,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-from Litagent.backend.app.providers.base import ProviderBase
+from litagent.backend.app.providers.base import ProviderBase
 
 SEMANTIC_SCHOLAR_API_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
 
