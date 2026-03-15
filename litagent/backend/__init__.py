@@ -1,3 +1,3 @@
 """
-Litagent - Streamlit 后端
+Litagent - FastAPI 后端
 """

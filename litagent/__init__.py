@@ -1,1 +1,3 @@
-"""xinghuo_agent package."""
+"""
+Litagent - Streamlit 前端
+"""
