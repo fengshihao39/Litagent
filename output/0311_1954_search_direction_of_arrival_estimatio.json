@@ -1,0 +1,110 @@
+[
+  {
+    "arxiv_id": "2002.01588",
+    "title": "Direction-of-Arrival Estimation Methods: A Performance-Complexity Tradeoff Perspective",
+    "authors": [
+      "Edno Gentilho",
+      "Paulo Rogério Scalassara",
+      "Taufik Abrão"
+    ],
+    "published": "2020-02-05",
+    "updated": "2020-02-05",
+    "categories": [
+      "eess.SP"
+    ],
+    "summary": "This work analyses the performance-complexity tradeoff for different direction of arrival (DoA) estimation techniques. Such tradeoff is investigated taking into account uniform linear array structures. Several DoA estimation techniques have been compared, namely the conventional Delay-and-Sum (DS), Minimum Variance Distortionless Response (MVDR), Multiple Signal Classifier (MUSIC) subspace, Estimation of Signal Parameters via Rotational Invariance Technique (ESPRIT), Unitary-ESPRIT and Fourier Transform method (FT-DoA). The analytical formulation of each estimation technique as well the comparative numerical results are discussed focused on the estimation accuracy versus complexity tradeoff. The present study reveals the behavior of seven techniques, demonstrating promising ones for current and future location applications involving DoA estimation, especially for 5G massive MIMO systems.",
+    "pdf_url": "https://arxiv.org/pdf/2002.01588",
+    "abs_url": "https://arxiv.org/abs/2002.01588"
+  },
+  {
+    "arxiv_id": "2207.12925",
+    "title": "Joint Direction-of-Arrival and Time-of-Arrival Estimation with Ultra-wideband Elliptical Arrays",
+    "authors": [
+      "Alejandro Ramírez-Arroyo",
+      "Antonio Alex-Amor",
+      "Pablo Padilla",
+      "Juan F. Valenzuela-Valdés"
+    ],
+    "published": "2022-07-26",
+    "updated": "2023-04-27",
+    "categories": [
+      "eess.SP"
+    ],
+    "summary": "This paper presents a general technique for the joint Direction-of-Arrival (DoA) and Time-of-Arrival (ToA) estimation in multipath environments. The proposed ultra-wideband technique is based on phase-mode expansions and the use of nearly frequency-invariant elliptical arrays. New possibilities open with the present approach, as not only elliptical, but also circular and linear (highly flattened) arrays can be considered with the same implementation. Systematic selection/rejection of signals-of-interest/signals-not-of-interest in smart wireless environments is possible, unlike with previous approaches based on circular arrays. Concentric elliptical arrays of many sizes and eccentricities can be jointly considered, with the subsequent improvement that entails in DoA and ToA detection. This leads to the realization of pseudo-random array patterns; namely, quasi-arbitrary geometries created from the superposition of multiple elliptical arrays. Some simulation and experimental tests (measurements in an anechoic chamber) are carried out for several frequency bands to check the correct performance of the method. The method is proven to give accurate estimations in all tested scenarios, and to be robust against noise and position uncertainty in sensor placement.",
+    "pdf_url": "https://arxiv.org/pdf/2207.12925",
+    "abs_url": "https://arxiv.org/abs/2207.12925"
+  },
+  {
+    "arxiv_id": "2112.00695",
+    "title": "DeepAoANet: Learning Angle of Arrival from Software Defined Radios with Deep Neural Networks",
+    "authors": [
+      "Zhuangzhuang Dai",
+      "Yuhang He",
+      "Tran Vu",
+      "Niki Trigoni",
+      "Andrew Markham"
+    ],
+    "published": "2021-12-01",
+    "updated": "2021-12-09",
+    "categories": [
+      "eess.SP",
+      "cs.LG",
+      "cs.RO"
+    ],
+    "summary": "Direction finding and positioning systems based on RF signals are significantly impacted by multipath propagation, particularly in indoor environments. Existing algorithms (e.g MUSIC) perform poorly in resolving Angle of Arrival (AoA) in the presence of multipath or when operating in a weak signal regime. We note that digitally sampled RF frontends allow for the easy analysis of signals, and their delayed components. Low-cost Software-Defined Radio (SDR) modules enable Channel State Information (CSI) extraction across a wide spectrum, motivating the design of an enhanced Angle-of-Arrival (AoA) solution. We propose a Deep Learning approach to deriving AoA from a single snapshot of the SDR multichannel data. We compare and contrast deep-learning based angle classification and regression models, to estimate up to two AoAs accurately. We have implemented the inference engines on different platforms to extract AoAs in real-time, demonstrating the computational tractability of our approach. To demonstrate the utility of our approach we have collected IQ (In-phase and Quadrature components) samples from a four-element Universal Linear Array (ULA) in various Light-of-Sight (LOS) and Non-Line-of-Sight (NLOS) environments, and published the dataset. Our proposed method demonstrates excellent reliability in determining number of impinging signals and realized mean absolute AoA errors less than $2^{\\circ}$.",
+    "pdf_url": "https://arxiv.org/pdf/2112.00695",
+    "abs_url": "https://arxiv.org/abs/2112.00695"
+  },
+  {
+    "arxiv_id": "2204.08996",
+    "title": "Time Difference of Arrival Extraction from Two-Way Ranging",
+    "authors": [
+      "Patrick Rathje",
+      "Olaf Landsiedel"
+    ],
+    "published": "2022-04-12",
+    "updated": "2024-01-03",
+    "categories": [
+      "eess.SP",
+      "cs.IT"
+    ],
+    "summary": "Two-Way Ranging enables the distance estimation between two active parties and allows time of flight measurements despite relative clock offset and drift. Limited by the number of messages, scalable solutions build on Time Difference of Arrival to infer timing information at passive listeners. However, the demand for accurate distance estimates dictates a tight bound on the time synchronization, thus limiting scalability to the localization of passive tags relative to static, synchronized anchors. This work describes the extraction of Time Difference of Arrival information from a Two-Way Ranging process, enabling the extraction of distance information on passive listeners and further allowing scalable tag localization without the need for static or synchronized anchors. The expected error is formally deducted. The extension allows the extraction of the timing difference despite relative clock offset and drift for the Double-Sided Two-Way Ranging and Single-Sided Two-Way Ranging with additional carrier frequency offset estimation.",
+    "pdf_url": "https://arxiv.org/pdf/2204.08996",
+    "abs_url": "https://arxiv.org/abs/2204.08996"
+  },
+  {
+    "arxiv_id": "2401.02386",
+    "title": "Direction of Arrival Estimation Using Microphone Array Processing for Moving Humanoid Robots",
+    "authors": [
+      "Vladimir Tourbabin",
+      "Boaz Rafaely"
+    ],
+    "published": "2024-01-04",
+    "updated": "2024-01-04",
+    "categories": [
+      "eess.AS",
+      "cs.RO",
+      "cs.SD"
+    ],
+    "summary": "The auditory system of humanoid robots has gained increased attention in recent years. This system typically acquires the surrounding sound field by means of a microphone array. Signals acquired by the array are then processed using various methods. One of the widely applied methods is direction of arrival estimation. The conventional direction of arrival estimation methods assume that the array is fixed at a given position during the estimation. However, this is not necessarily true for an array installed on a moving humanoid robot. The array motion, if not accounted for appropriately, can introduce a significant error in the estimated direction of arrival. The current paper presents a signal model that takes the motion into account. Based on this model, two processing methods are proposed. The first one compensates for the motion of the robot. The second method is applicable to periodic signals and utilizes the motion in order to enhance the performance to a level beyond that of a stationary array. Numerical simulations and an experimental study are provided, demonstrating that the motion compensation method almost eliminates the motion-related error. It is also demonstrated that by using the motion-based enhancement method it is possible to improve the direction of arrival estimation performance, as compared to that obtained when using a stationary array.",
+    "pdf_url": "https://arxiv.org/pdf/2401.02386",
+    "abs_url": "https://arxiv.org/abs/2401.02386"
+  },
+  {
+    "arxiv_id": "1401.3567",
+    "title": "2D Direction Of Arrival Estimation with Modified Propagator",
+    "authors": [
+      "Y. Khmou",
+      "S. Safi"
+    ],
+    "published": "2014-01-15",
+    "updated": "2014-01-15",
+    "categories": [
+      "cs.IT",
+      "stat.AP"
+    ],
+    "summary": "In this paper, a fast algorithm for the Direction Of Arrival (DOA) estimation of radiating sources, based on partial covariance matrix and without eigende- composition of incoming signals is extended to two dimensional problem of joint azimuth and elevation estimation angles using Uniform Circular Array (UCA) in case of non coherent narrowband signals. Simulation results are presented with both Additive White Gaussian Noise (AWGN) and real symmetric Toeplitz noise.",
+    "pdf_url": "https://arxiv.org/pdf/1401.3567",
+    "abs_url": "https://arxiv.org/abs/1401.3567"
+  }
+]

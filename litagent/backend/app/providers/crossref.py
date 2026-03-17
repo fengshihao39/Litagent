@@ -60,10 +60,7 @@ def search_papers(
     params = {
         "query": query,
         "rows": min(max_results * 2, 50),
-        "select": (
-            "DOI,title,author,published,container-title,abstract,is-referenced-by-count,",
-            "subject,URL",
-        ),
+        "select": "DOI,title,author,published,container-title,abstract,is-referenced-by-count,subject,URL",
         "sort": sort_by,
         "order": "desc",
     }

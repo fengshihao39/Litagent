@@ -1,0 +1,107 @@
+[
+  {
+    "arxiv_id": "2110.01831",
+    "title": "The Artificial Scientist: Logicist, Emergentist, and Universalist Approaches to Artificial General Intelligence",
+    "authors": [
+      "Michael Timothy Bennett",
+      "Yoshihiro Maruyama"
+    ],
+    "published": "2021-10-05",
+    "updated": "2021-10-05",
+    "categories": [
+      "cs.AI"
+    ],
+    "summary": "We attempt to define what is necessary to construct an Artificial Scientist, explore and evaluate several approaches to artificial general intelligence (AGI) which may facilitate this, conclude that a unified or hybrid approach is necessary and explore two theories that satisfy this requirement to some degree.",
+    "pdf_url": "https://arxiv.org/pdf/2110.01831",
+    "abs_url": "https://arxiv.org/abs/2110.01831"
+  },
+  {
+    "arxiv_id": "2110.01835",
+    "title": "Compression, The Fermi Paradox and Artificial Super-Intelligence",
+    "authors": [
+      "Michael Timothy Bennett"
+    ],
+    "published": "2021-10-05",
+    "updated": "2021-10-05",
+    "categories": [
+      "cs.AI"
+    ],
+    "summary": "The following briefly discusses possible difficulties in communication with and control of an AGI (artificial general intelligence), building upon an explanation of The Fermi Paradox and preceding work on symbol emergence and artificial general intelligence. The latter suggests that to infer what someone means, an agent constructs a rationale for the observed behaviour of others. Communication then requires two agents labour under similar compulsions and have similar experiences (construct similar solutions to similar tasks). Any non-human intelligence may construct solutions such that any rationale for their behaviour (and thus the meaning of their signals) is outside the scope of what a human is inclined to notice or comprehend. Further, the more compressed a signal, the closer it will appear to random noise. Another intelligence may possess the ability to compress information to the extent that, to us, their signals would appear indistinguishable from noise (an explanation for The Fermi Paradox). To facilitate predictive accuracy an AGI would tend to more compressed representations of the world, making any rationale for their behaviour more difficult to comprehend for the same reason. Communication with and control of an AGI may subsequently necessitate not only human-like compulsions and experiences, but imposed cognitive impairment.",
+    "pdf_url": "https://arxiv.org/pdf/2110.01835",
+    "abs_url": "https://arxiv.org/abs/2110.01835"
+  },
+  {
+    "arxiv_id": "2204.10358",
+    "title": "Creative Problem Solving in Artificially Intelligent Agents: A Survey and Framework",
+    "authors": [
+      "Evana Gizzi",
+      "Lakshmi Nair",
+      "Sonia Chernova",
+      "Jivko Sinapov"
+    ],
+    "published": "2022-04-21",
+    "updated": "2022-04-21",
+    "categories": [
+      "cs.AI"
+    ],
+    "summary": "Creative Problem Solving (CPS) is a sub-area within Artificial Intelligence (AI) that focuses on methods for solving off-nominal, or anomalous problems in autonomous systems. Despite many advancements in planning and learning, resolving novel problems or adapting existing knowledge to a new context, especially in cases where the environment may change in unpredictable ways post deployment, remains a limiting factor in the safe and useful integration of intelligent systems. The emergence of increasingly autonomous systems dictates the necessity for AI agents to deal with environmental uncertainty through creativity. To stimulate further research in CPS, we present a definition and a framework of CPS, which we adopt to categorize existing AI methods in this field. Our framework consists of four main components of a CPS problem, namely, 1) problem formulation, 2) knowledge representation, 3) method of knowledge manipulation, and 4) method of evaluation. We conclude our survey with open research questions, and suggested directions for the future.",
+    "pdf_url": "https://arxiv.org/pdf/2204.10358",
+    "abs_url": "https://arxiv.org/abs/2204.10358"
+  },
+  {
+    "arxiv_id": "2304.04780",
+    "title": "A Review on Explainable Artificial Intelligence for Healthcare: Why, How, and When?",
+    "authors": [
+      "Subrato Bharati",
+      "M. Rubaiyat Hossain Mondal",
+      "Prajoy Podder"
+    ],
+    "published": "2023-04-10",
+    "updated": "2023-04-10",
+    "categories": [
+      "cs.LG",
+      "cs.AI"
+    ],
+    "summary": "Artificial intelligence (AI) models are increasingly finding applications in the field of medicine. Concerns have been raised about the explainability of the decisions that are made by these AI models. In this article, we give a systematic analysis of explainable artificial intelligence (XAI), with a primary focus on models that are currently being used in the field of healthcare. The literature search is conducted following the preferred reporting items for systematic reviews and meta-analyses (PRISMA) standards for relevant work published from 1 January 2012 to 02 February 2022. The review analyzes the prevailing trends in XAI and lays out the major directions in which research is headed. We investigate the why, how, and when of the uses of these XAI models and their implications. We present a comprehensive examination of XAI methodologies as well as an explanation of how a trustworthy AI can be derived from describing AI models for healthcare fields. The discussion of this work will contribute to the formalization of the XAI field.",
+    "pdf_url": "https://arxiv.org/pdf/2304.04780",
+    "abs_url": "https://arxiv.org/abs/2304.04780"
+  },
+  {
+    "arxiv_id": "1301.2158",
+    "title": "Artificial Intelligence Framework for Simulating Clinical Decision-Making: A Markov Decision Process Approach",
+    "authors": [
+      "Casey C. Bennett",
+      "Kris Hauser"
+    ],
+    "published": "2013-01-10",
+    "updated": "2013-01-10",
+    "categories": [
+      "cs.AI",
+      "stat.ML"
+    ],
+    "summary": "In the modern healthcare system, rapidly expanding costs/complexity, the growing myriad of treatment options, and exploding information streams that often do not effectively reach the front lines hinder the ability to choose optimal treatment decisions over time. The goal in this paper is to develop a general purpose (non-disease-specific) computational/artificial intelligence (AI) framework to address these challenges. This serves two potential functions: 1) a simulation environment for exploring various healthcare policies, payment methodologies, etc., and 2) the basis for clinical artificial intelligence - an AI that can think like a doctor. This approach combines Markov decision processes and dynamic decision networks to learn from clinical data and develop complex plans via simulation of alternative sequential decision paths while capturing the sometimes conflicting, sometimes synergistic interactions of various components in the healthcare system. It can operate in partially observable environments (in the case of missing observations or data) by maintaining belief states about patient health status and functions as an online agent that plans and re-plans. This framework was evaluated using real patient data from an electronic health record. Such an AI framework easily outperforms the current treatment-as-usual (TAU) case-rate/fee-for-service models of healthcare (Cost per Unit Change: $189 vs. $497) while obtaining a 30-35% increase in patient outcomes. Tweaking certain model parameters further enhances this advantage, obtaining roughly 50% more improvement for roughly half the costs. Given careful design and problem formulation, an AI simulation framework can approximate optimal decisions even in complex and uncertain environments. Future work is described that outlines potential lines of research and integration of machine learning algorithms for personalized medicine.",
+    "pdf_url": "https://arxiv.org/pdf/1301.2158",
+    "abs_url": "https://arxiv.org/abs/1301.2158"
+  },
+  {
+    "arxiv_id": "2410.11896",
+    "title": "Study on the Helpfulness of Explainable Artificial Intelligence",
+    "authors": [
+      "Tobias Labarta",
+      "Elizaveta Kulicheva",
+      "Ronja Froelian",
+      "Christian Geißler",
+      "Xenia Melman",
+      "Julian von Klitzing"
+    ],
+    "published": "2024-10-14",
+    "updated": "2024-10-14",
+    "categories": [
+      "cs.HC",
+      "cs.AI"
+    ],
+    "summary": "Explainable Artificial Intelligence (XAI) is essential for building advanced machine learning-powered applications, especially in critical domains such as medical diagnostics or autonomous driving. Legal, business, and ethical requirements motivate using effective XAI, but the increasing number of different methods makes it challenging to pick the right ones. Further, as explanations are highly context-dependent, measuring the effectiveness of XAI methods without users can only reveal a limited amount of information, excluding human factors such as the ability to understand it. We propose to evaluate XAI methods via the user's ability to successfully perform a proxy task, designed such that a good performance is an indicator for the explanation to provide helpful information. In other words, we address the helpfulness of XAI for human decision-making. Further, a user study on state-of-the-art methods was conducted, showing differences in their ability to generate trust and skepticism and the ability to judge the rightfulness of an AI decision correctly. Based on the results, we highly recommend using and extending this approach for more objective-based human-centered user studies to measure XAI performance in an end-to-end fashion.",
+    "pdf_url": "https://arxiv.org/pdf/2410.11896",
+    "abs_url": "https://arxiv.org/abs/2410.11896"
+  }
+]

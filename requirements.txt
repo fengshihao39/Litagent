@@ -1,0 +1,21 @@
+# 后端
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+
+# AI / API
+openai>=1.30.0
+
+# PDF 解析
+pymupdf>=1.24.0
+
+# 配置
+python-dotenv>=1.0.0
+
+# 前端
+streamlit>=1.35.0
+
+# 数据处理 / 可视化
+requests>=2.32.0
+pandas>=2.2.0
+matplotlib>=3.9.0
